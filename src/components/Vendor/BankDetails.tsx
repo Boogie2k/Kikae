@@ -1,0 +1,70 @@
+"use client";
+
+import { FaEdit, FaTrash } from "react-icons/fa";
+
+const BankCard = ({ name, accountNumber, bank, isDefault }: any) => {
+  return (
+    <div className="w-80 bg-white shadow-md rounded-lg p-4 border border-gray-200">
+      <h2 className="text-blue-600 text-sm font-semibold">{name}</h2>
+      <p className="text-gray-500 text-sm">{accountNumber}</p>
+      <p className="text-gray-700 text-base font-medium">{bank}</p>
+
+      <div className="flex items-center gap-2 mt-3">
+        <button
+          className={`py-2 px-4 rounded-md text-sm font-semibold ${
+            isDefault
+              ? "border border-blue-600 text-blue-600"
+              : "bg-blue-600 text-white hover:bg-blue-700 transition"
+          }`}
+        >
+          {isDefault ? "Default" : "Set as default"}
+        </button>
+        <button className="p-2 text-gray-600 hover:text-blue-600">
+          <FaEdit />
+        </button>
+        <button className="p-2 text-gray-600 hover:text-red-600">
+          <FaTrash />
+        </button>
+      </div>
+    </div>
+  );
+};
+
+const BankCardList = () => {
+  const bankAccounts = [
+    {
+      name: "Abigael Couture",
+      accountNumber: "237488932",
+      bank: "Zenith Bank",
+      isDefault: true,
+    },
+    {
+      name: "Abigael Couture",
+      accountNumber: "3748291849",
+      bank: "First City Monument Bank (FCMB)",
+      isDefault: false,
+    },
+    {
+      name: "Abigael Couture",
+      accountNumber: "3748291849",
+      bank: "First City Monument Bank (FCMB)",
+      isDefault: false,
+    },
+    {
+      name: "Abigael Couture",
+      accountNumber: "3748291849",
+      bank: "First City Monument Bank (FCMB)",
+      isDefault: false,
+    },
+  ];
+
+  return (
+    <div className="flex flex-wrap gap-6 mt-6">
+      {bankAccounts.map((account, index) => (
+        <BankCard key={index} {...account} />
+      ))}
+    </div>
+  );
+};
+
+export default BankCardList;
