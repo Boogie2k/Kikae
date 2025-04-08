@@ -1,8 +1,6 @@
 "use client";
 import { useBoundStore } from "@/store/store";
 import React from "react";
-import { useRouter } from "next/navigation";
-import { deleteAdmin } from "@/networking/deleteAdmin";
 
 const DeleteAdminModal = ({
   text,
@@ -12,22 +10,14 @@ const DeleteAdminModal = ({
   //display: boolean;
   //onPress: (btn: string) => void;
 }) => {
-  const displayModal = useBoundStore((state) => state.isDeleteAdminModalVisible);
-  const setDisplayModal = useBoundStore((state) => state.setIsDeleteAdminModalVisible);
-
-  const router = useRouter();
+  const displayModal = useBoundStore(
+    (state) => state.isDeleteAdminModalVisible
+  );
+  const setDisplayModal = useBoundStore(
+    (state) => state.setIsDeleteAdminModalVisible
+  );
 
   const userId = useBoundStore((state) => state.deleteAdminId);
-
-  const handleDelete = async () => {
-    const result = await deleteAdmin(userId);
-    if (result.status == 200) {
-      setDisplayModal(false);
-      router.back();
-    }
-    setDisplayModal(false);
-    //  router.back();
-  };
 
   console.log({ userId });
   return (
@@ -48,10 +38,7 @@ const DeleteAdminModal = ({
             >
               No
             </button>
-            <button
-              onClick={handleDelete}
-              className="px-[52px] py-5 bg-[#ff0a54] rounded-[32px] justify-center items-center gap-2.5 flex text-white text-base font-normal font-['DM Sans']"
-            >
+            <button className="px-[52px] py-5 bg-[#ff0a54] rounded-[32px] justify-center items-center gap-2.5 flex text-white text-base font-normal font-['DM Sans']">
               Yes
             </button>
           </div>
