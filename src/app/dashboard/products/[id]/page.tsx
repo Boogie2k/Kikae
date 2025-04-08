@@ -101,9 +101,9 @@ const ProductDetails = () => {
           <div>
             <h4 className="font-bold text-base text-kikaeBlue">Description</h4>
             <p className="text-base text-kikaeGrey">
-              This shirt isn't just comfortable, it's practically ethereal. The
-              "Cloudchaser" is crafted from 100% organic linen, a fabric so
-              lightweigh... View more
+              This shirt isn&apos;t just comfortable, it&apos;s practically
+              ethereal. The &quot;Cloudchaser&quot; is crafted from 100% organic
+              linen, a fabric so lightweigh... View more
             </p>
           </div>
         </div>

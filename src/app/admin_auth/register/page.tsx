@@ -1,5 +1,5 @@
 "use client";
-import CatchMe from "@/assets/CatchMe";
+
 import Loader from "@/components/Loader";
 
 import Link from "next/link";
@@ -24,7 +24,7 @@ const Register = () => {
     watch,
     formState: { errors },
   } = useForm<FormData>();
-  const onSubmit = (data: FormData) => {
+  const onSubmit = () => {
     (async () => {
       try {
         setIsLoading(true);

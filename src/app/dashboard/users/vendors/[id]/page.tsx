@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+
 import Image from "next/image";
 import image from "@/assets/slide0.png";
 import { useRouter, useSearchParams } from "next/navigation";

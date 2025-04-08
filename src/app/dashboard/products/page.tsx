@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+
 import { useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 
@@ -116,7 +116,7 @@ const Table = () => {
           </div>
         }
         <div className=" bg-white rounded-3xl flex  font-openSansRegular">
-          {productTypes.map((productType, index) => (
+          {productTypes.map((productType) => (
             <button
               key={productType}
               onClick={() =>

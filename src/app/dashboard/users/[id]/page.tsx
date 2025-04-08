@@ -1,12 +1,7 @@
 "use client";
 import React, { useEffect } from "react";
 //import { useRouter } from "next/router";
-import {
-  usePathname,
-  useParams,
-  useSearchParams,
-  useRouter,
-} from "next/navigation";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import MyModal from "@/components/Modal/Modal";
 import Link from "next/link";
 import Details from "@/components/user/Details";

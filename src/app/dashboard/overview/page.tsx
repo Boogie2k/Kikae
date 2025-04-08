@@ -114,7 +114,7 @@ export default function Dashboard(): JSX.Element {
             <tr className="border-b">
               <td className="py-2">1</td>
               <td className="py-2 text-blue-600 underline cursor-pointer">
-                Men's Clothing
+                Men&apos;s Clothing
               </td>
               <td className="py-2">₦1,200,000</td>
               <td className="py-2">320</td>
@@ -122,7 +122,7 @@ export default function Dashboard(): JSX.Element {
             <tr className="border-b">
               <td className="py-2">2</td>
               <td className="py-2 text-blue-600 underline cursor-pointer">
-                Women's Clothing
+                Women&apos;s Clothing
               </td>
               <td className="py-2">₦950,000</td>
               <td className="py-2">280</td>

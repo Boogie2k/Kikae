@@ -1,7 +1,7 @@
 "use client";
-import AddCategory from "@/components/Categories/AddCategory";
+
 import ModalDetails from "@/components/Categories/ModalDetails";
-import Modal from "@/components/Modal";
+
 import MyModal from "@/components/Modal/Modal";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -77,7 +77,6 @@ const categoriesData = [
 
 export default function CategoriesTable() {
   const [search, setSearch] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const action = useSearchParams().get("action");
   const filteredCategories = categoriesData.filter(

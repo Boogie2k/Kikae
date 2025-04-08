@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 export default function ImageGallery() {
   const images = [
     "https://portal.nbaunitybar.org/tailor-api/storage/app/profile-pic/wCmgY7UuF3m2aZCPrX4uPuL3yaqkLRM0GhD9FaEn.jpg", // Main image

@@ -1,9 +1,7 @@
 "use client";
-import { getAllAdmins } from "@/networking/getAllAdmins";
-import { AdminProfileType } from "@/types/types";
-import React, { useEffect, useState } from "react";
+
+import React from "react";
 import { useRouter } from "next/navigation";
-import { useBoundStore } from "@/store/store";
 
 const admins = [
   {
@@ -15,17 +13,6 @@ const admins = [
 ];
 
 const Page = () => {
-  const setDisplayDeleteModal = useBoundStore(
-    (state) => state.setIsDeleteAdminModalVisible
-  );
-
-  const setDeleteUserId = useBoundStore((state) => state.setDeleteAdminId);
-
-  const openModal = (userId: string) => {
-    setDeleteUserId(userId);
-    setDisplayDeleteModal(true);
-  };
-
   const router = useRouter();
   return (
     <div className="h-[352px] p-12 bg-white rounded-3xl border border-black/25 justify-start items-start gap-16 inline-flex overflow-y-auto mt-6">

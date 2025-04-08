@@ -23,7 +23,7 @@ const Login = () => {
     watch,
     formState: { errors },
   } = useForm<FormData>();
-  const onSubmit = (data: FormData) => {
+  const onSubmit = () => {
     (async () => {
       try {
         setIsLoading(true);

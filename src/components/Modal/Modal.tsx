@@ -1,5 +1,4 @@
-import { Button, Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
-import { useState } from "react";
+import { Dialog, DialogPanel } from "@headlessui/react";
 
 export default function MyModal({
   isVisible,

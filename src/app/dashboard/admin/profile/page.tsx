@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 
-import React, { useEffect, useState } from "react";
-import Cookies from "universal-cookie";
+import React from "react";
 
 const admin = {
   firstName: "Henry",

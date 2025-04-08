@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { motion, useDragControls } from "framer-motion";
 
 const videos: string[] = [
@@ -14,7 +14,10 @@ export default function Reels() {
   const dragControls = useDragControls();
   const videoContainerRef = useRef<HTMLDivElement | null>(null);
 
-  const handleDragEnd = (_: any, info: { offset: { y: number } }) => {
+  const handleDragEnd = (
+    _: MouseEvent | TouchEvent | PointerEvent,
+    info: { offset: { y: number } }
+  ) => {
     if (info.offset.y < -100) {
       setCurrentIndex((prevIndex) =>
         Math.min(prevIndex + 1, videos.length - 1)

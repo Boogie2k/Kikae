@@ -3,7 +3,7 @@ import { users } from "@/app/data";
 import { useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 
-const page = () => {
+const Page = () => {
   const router = useRouter();
 
   const type = useSearchParams().get("type");
@@ -61,4 +61,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
