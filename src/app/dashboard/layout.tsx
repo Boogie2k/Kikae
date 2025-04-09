@@ -3,24 +3,13 @@ import DeleteAdminModal from "@/components/DeleteAdminModal";
 import IncreaseLimitModal from "@/components/IncreaseLimitModal";
 import Modal from "@/components/Modal";
 import Sidebar from "@/components/Sidebar";
-import React, { useEffect } from "react";
-import Cookies from "universal-cookie";
+import React from "react";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const cookies = new Cookies();
-
-  const authToken = cookies.get("authToken");
-  useEffect(() => {
-    if (!authToken) {
-      window.location.href = "/admin_auth/login";
-    }
-  }, [authToken]);
-
-  if (!authToken) return null;
   return (
     <section className="flex min-h-screen bg-lightWhite ">
       {/* Fixed Sidebar */}
