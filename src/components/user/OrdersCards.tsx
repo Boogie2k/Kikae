@@ -1,4 +1,6 @@
+"use client";
 import { ArrowBack } from "@/assets/ArrowBack";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 const orders = [
@@ -45,11 +47,15 @@ const orders = [
 ];
 
 const OrdersGrid = () => {
+  const router = useRouter();
   return (
     <div className="p-6 text-black">
       <div className="flex flex-row items-center justify-between mb-6">
         <div className="flex flex-row items-center gap-6">
-          <ArrowBack />
+          <button onClick={() => router.back()} className="cursor-pointer">
+            <ArrowBack />
+          </button>
+
           <h2 className="text-xl font-semibold ">Orders</h2>
         </div>
 
