@@ -1,9 +1,13 @@
 "use client";
 import LogisticsTable from "@/components/Logistic/Logistic";
-import React from "react";
+import React, { Suspense } from "react";
 
 const page = () => {
-  return <LogisticsTable />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LogisticsTable />;
+    </Suspense>
+  );
 };
 
 export default page;

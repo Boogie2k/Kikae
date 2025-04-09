@@ -5,7 +5,7 @@ import ModalDetails from "@/components/Categories/ModalDetails";
 import MyModal from "@/components/Modal/Modal";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 
 const categoriesData = [
   {
@@ -87,60 +87,62 @@ export default function CategoriesTable() {
   const router = useRouter();
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      <MyModal
-        isVisible={action == "add" || action == "edit" || action == "delete"}
-        close={() => router.back()}
-      >
-        <ModalDetails />
-      </MyModal>
-      <div className="flex justify-between items-center mb-4">
-        <input
-          type="text"
-          placeholder="Search for categories or subcategories"
-          className="border p-2 rounded w-1/3"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <Link href={`?action=${"add"}`} className="text-blue-500">
-          Add new category
-        </Link>
-      </div>
-      <table className="w-full text-black rounded-3xl shadow-sm">
-        <thead className="text-kikaeBlue">
-          <tr>
-            <th className="p-2 text-left">Categories</th>
-            <th className="p-2 text-left">Subcategories</th>
-            <th className="p-2 text-right">No. of items</th>
-            <th className="p-2 text-center">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredCategories.map((cat, index) => (
-            <tr key={index}>
-              <td className="p-2 text-black underline cursor-pointer">
-                {cat.category}
-              </td>
-              <td className="p-2">{cat.subcategories}</td>
-              <td className="p-2 text-right">{cat.items}</td>
-              <td className="p-2 text-center space-x-2">
-                <Link
-                  href={`?action=${"edit"}`}
-                  className="text-black underline"
-                >
-                  Edit
-                </Link>
-                <Link
-                  href={`?action=${"delete"}`}
-                  className="text-kikaeGrey underline"
-                >
-                  Delete
-                </Link>
-              </td>
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="p-6 max-w-6xl mx-auto">
+        <MyModal
+          isVisible={action == "add" || action == "edit" || action == "delete"}
+          close={() => router.back()}
+        >
+          <ModalDetails />
+        </MyModal>
+        <div className="flex justify-between items-center mb-4">
+          <input
+            type="text"
+            placeholder="Search for categories or subcategories"
+            className="border p-2 rounded w-1/3"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <Link href={`?action=${"add"}`} className="text-blue-500">
+            Add new category
+          </Link>
+        </div>
+        <table className="w-full text-black rounded-3xl shadow-sm">
+          <thead className="text-kikaeBlue">
+            <tr>
+              <th className="p-2 text-left">Categories</th>
+              <th className="p-2 text-left">Subcategories</th>
+              <th className="p-2 text-right">No. of items</th>
+              <th className="p-2 text-center">Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {filteredCategories.map((cat, index) => (
+              <tr key={index}>
+                <td className="p-2 text-black underline cursor-pointer">
+                  {cat.category}
+                </td>
+                <td className="p-2">{cat.subcategories}</td>
+                <td className="p-2 text-right">{cat.items}</td>
+                <td className="p-2 text-center space-x-2">
+                  <Link
+                    href={`?action=${"edit"}`}
+                    className="text-black underline"
+                  >
+                    Edit
+                  </Link>
+                  <Link
+                    href={`?action=${"delete"}`}
+                    className="text-kikaeGrey underline"
+                  >
+                    Delete
+                  </Link>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </Suspense>
   );
 }

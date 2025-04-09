@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { Suspense } from "react";
 
 import { useRouter, useSearchParams } from "next/navigation";
 import Users from "@/components/user/Users";
@@ -11,19 +11,63 @@ const UserTable = () => {
   const status = useSearchParams().get("status");
 
   return (
-    <div className="pt-6 pr-6">
-      <div className="flex flex-row items-center items-center justify-between mb-6">
-        <div className="w-[36.68rem]   flex justify-between items-center bg-white rounded-3xl border border-black/25">
-          <input
-            placeholder="search for a user"
-            type="text"
-            className="w-11/12 py-1.5 rounded-3xl px-6 text-black text-base font-normal font-['DM Sans'] leading-[30px] border-none"
-          />
-          <button className="px-6">search</button>
-        </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="pt-6 pr-6">
+        <div className="flex flex-row items-center items-center justify-between mb-6">
+          <div className="w-[36.68rem]   flex justify-between items-center bg-white rounded-3xl border border-black/25">
+            <input
+              placeholder="search for a user"
+              type="text"
+              className="w-11/12 py-1.5 rounded-3xl px-6 text-black text-base font-normal font-['DM Sans'] leading-[30px] border-none"
+            />
+            <button className="px-6">search</button>
+          </div>
 
-        {status && (
-          <div className=" bg-white rounded-3xl font-openSansRegular">
+          {status && (
+            <div className=" bg-white rounded-3xl font-openSansRegular">
+              <button
+                onClick={() =>
+                  router.replace(
+                    "/dashboard/users?type=vendors&&status=approved&&page=1"
+                  )
+                }
+                className={`${
+                  status == "approved"
+                    ? "bg-kikaeBlue text-white"
+                    : "#fff text-kikaeGray"
+                } py-1.5 px-2.5  rounded-3xl`}
+              >
+                Approved
+              </button>
+              <button
+                onClick={() =>
+                  router.replace(
+                    "/dashboard/users?type=vendors&&status=pending&&page=1"
+                  )
+                }
+                className={`${
+                  status == "pending"
+                    ? "bg-kikaeBlue text-white"
+                    : "#fff text-kikaeGray"
+                } py-1.5 px-2.5  rounded-3xl`}
+              >
+                Pending
+              </button>
+            </div>
+          )}
+          <div className=" bg-white rounded-3xl  font-openSansRegular">
+            <button
+              onClick={() =>
+                router.replace("/dashboard/users?type=buyers&&page=1")
+              }
+              className={`${
+                type == "buyers"
+                  ? "bg-kikaeBlue text-white"
+                  : "#fff text-kikaeGray"
+              } py-1.5 px-2.5 rounded-3xl`}
+            >
+              Buyers
+            </button>
             <button
               onClick={() =>
                 router.replace(
@@ -31,60 +75,18 @@ const UserTable = () => {
                 )
               }
               className={`${
-                status == "approved"
+                type == "vendors"
                   ? "bg-kikaeBlue text-white"
                   : "#fff text-kikaeGray"
-              } py-1.5 px-2.5  rounded-3xl`}
+              } py-1.5 px-2.5   rounded-3xl`}
             >
-              Approved
-            </button>
-            <button
-              onClick={() =>
-                router.replace(
-                  "/dashboard/users?type=vendors&&status=pending&&page=1"
-                )
-              }
-              className={`${
-                status == "pending"
-                  ? "bg-kikaeBlue text-white"
-                  : "#fff text-kikaeGray"
-              } py-1.5 px-2.5  rounded-3xl`}
-            >
-              Pending
+              Vendors
             </button>
           </div>
-        )}
-        <div className=" bg-white rounded-3xl  font-openSansRegular">
-          <button
-            onClick={() =>
-              router.replace("/dashboard/users?type=buyers&&page=1")
-            }
-            className={`${
-              type == "buyers"
-                ? "bg-kikaeBlue text-white"
-                : "#fff text-kikaeGray"
-            } py-1.5 px-2.5 rounded-3xl`}
-          >
-            Buyers
-          </button>
-          <button
-            onClick={() =>
-              router.replace(
-                "/dashboard/users?type=vendors&&status=approved&&page=1"
-              )
-            }
-            className={`${
-              type == "vendors"
-                ? "bg-kikaeBlue text-white"
-                : "#fff text-kikaeGray"
-            } py-1.5 px-2.5   rounded-3xl`}
-          >
-            Vendors
-          </button>
         </div>
+        <Users />
       </div>
-      <Users />
-    </div>
+    </Suspense>
   );
 };
 
