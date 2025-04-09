@@ -1,5 +1,4 @@
 "use client";
-import CatchMe from "@/assets/CatchMe";
 
 /* import { superAdminLogin } from "@/networking/superAdminLogin"; */
 
@@ -35,7 +34,7 @@ const Login = () => {
     watch,
     formState: { errors },
   } = useForm<FormData>();
-  const onSubmit = (data: FormData) => {
+  const onSubmit = () => {
     (async () => {
       try {
         setIsLoading(true);
