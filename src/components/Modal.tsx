@@ -1,9 +1,7 @@
 "use client";
 
-import { deleteUser } from "@/networking/deleteUser";
 import { useBoundStore } from "@/store/store";
 import React from "react";
-import { useRouter } from "next/navigation";
 
 const Modal = ({
   text,
@@ -16,19 +14,7 @@ const Modal = ({
   const displayModal = useBoundStore((state) => state.displayDeleteModal);
   const setDisplayModal = useBoundStore((state) => state.setDisplayDeleteModal);
 
-  const router = useRouter();
-
   const userId = useBoundStore((state) => state.deleteUserId);
-
-  const handleDelete = async () => {
-    const result = await deleteUser(userId);
-    if (result.status == 200) {
-      setDisplayModal(false);
-      router.back();
-    }
-    setDisplayModal(false);
-    //   router.back();
-  };
 
   console.log({ userId });
   return (
@@ -49,10 +35,7 @@ const Modal = ({
             >
               No
             </button>
-            <button
-              onClick={handleDelete}
-              className="px-[52px] py-5 bg-[#ff0a54] rounded-[32px] justify-center items-center gap-2.5 flex text-white text-base font-normal font-['DM Sans']"
-            >
+            <button className="px-[52px] py-5 bg-[#ff0a54] rounded-[32px] justify-center items-center gap-2.5 flex text-white text-base font-normal font-['DM Sans']">
               Yes
             </button>
           </div>
