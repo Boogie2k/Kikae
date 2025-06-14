@@ -1,8 +1,10 @@
 "use client";
-import React, { Suspense } from "react";
+import React, { Suspense, useEffect } from "react";
 
 import { useRouter, useSearchParams } from "next/navigation";
 import Users from "@/components/user/Users";
+import { getUsers } from "@/networking/endpoints/getUsers";
+import { useBoundStore } from "@/store/store";
 
 const Page = () => {
   return (
@@ -14,9 +16,22 @@ const Page = () => {
 
 const UserTable = () => {
   const router = useRouter();
+  // const users = useBoundStore((state) => state.allUsers);
+  const setUsers = useBoundStore((state) => state.setAllUsers);
 
   const type = useSearchParams().get("type");
   const status = useSearchParams().get("status");
+
+  useEffect(() => {
+    const handleGetUsers = async () => {
+      const result = await getUsers();
+      if (!result) return;
+
+      setUsers(result.users);
+    };
+
+    handleGetUsers();
+  }, [setUsers]);
 
   return (
     <div className="pt-6 pr-6">

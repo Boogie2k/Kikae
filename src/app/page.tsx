@@ -11,6 +11,7 @@ import Loader from "@/components/Loader";
 import { toast } from "react-toastify";
 
 import Cookies from "universal-cookie";
+import { adminLogin } from "@/networking/endpoints/adminLogin";
 
 type FormData = {
   email: string;
@@ -20,6 +21,7 @@ type FormData = {
 const Login = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = React.useState(false);
+
   const cookies = new Cookies();
 
   const authToken = cookies.get("authToken");
@@ -34,10 +36,14 @@ const Login = () => {
     watch,
     formState: { errors },
   } = useForm<FormData>();
-  const onSubmit = () => {
+  const onSubmit = (data: FormData) => {
     (async () => {
       try {
         setIsLoading(true);
+
+        const result = await adminLogin(data.email, data.password);
+
+        if (!result) return setIsLoading(false);
 
         router.push("/dashboard/overview");
 

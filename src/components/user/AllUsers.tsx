@@ -1,17 +1,21 @@
 "use client";
 import React from "react";
-import { users } from "@/app/data"; // Importing dummy data
+//import { users } from "@/app/data"; // Importing dummy data
 import { useRouter, useSearchParams } from "next/navigation";
+import { useBoundStore } from "@/store/store";
+import { mediaUrlPrefix } from "@/networking/apiUrl";
 
 const Users = () => {
   const router = useRouter();
 
   const type = useSearchParams().get("type");
 
+  const users = useBoundStore((state) => state.allUsers);
+
   //const page = useSearchParams().get("page");
 
-  const goToUserPage = () => {
-    router.push("/dashboard/users/1");
+  const goToUserPage = (id: string) => {
+    router.push(`/dashboard/users/${id}`);
   };
   console.log({ type });
   return (
@@ -29,31 +33,32 @@ const Users = () => {
             </tr>
           </thead>
           <tbody>
-            {users.map((user, index) => (
-              <tr key={index} className="hover:bg-gray-50">
-                <td
-                  onClick={goToUserPage}
-                  className="p-3 underline cursor-pointer"
-                >
-                  {user.firstName}
-                </td>
-                <td className="p-3">{user.lastName}</td>
-                <td className="p-3">{user.email}</td>
-                <td className="p-3">{user.phoneNumber}</td>
-                <td className="p-3">
-                  <img
-                    src={user.profilePicture}
-                    alt="Profile"
-                    className="w-8 h-8 rounded-full"
-                  />
-                </td>
-                <td className="p-3">
-                  <button className="text-red-600 hover:underline">
-                    Deactivate
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {users &&
+              users.map((user, index) => (
+                <tr key={index} className="hover:bg-gray-50">
+                  <td
+                    onClick={() => goToUserPage(user.id)}
+                    className="p-3 underline cursor-pointer"
+                  >
+                    {user.fname}
+                  </td>
+                  <td className="p-3">{user.lname}</td>
+                  <td className="p-3">{user.email}</td>
+                  <td className="p-3">{user.phone}</td>
+                  <td className="p-3">
+                    <img
+                      src={mediaUrlPrefix + user?.profilePic}
+                      alt="Profile"
+                      className="w-8 h-8 rounded-full"
+                    />
+                  </td>
+                  <td className="p-3">
+                    <button className="text-red-600 hover:underline">
+                      Deactivate
+                    </button>
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>

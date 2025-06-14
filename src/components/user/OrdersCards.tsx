@@ -1,9 +1,11 @@
 "use client";
 import { ArrowBack } from "@/assets/ArrowBack";
+import { mediaUrlPrefix } from "@/networking/apiUrl";
+import { useBoundStore } from "@/store/store";
 import { useRouter } from "next/navigation";
 import React from "react";
 
-const orders = [
+/* const orders = [
   {
     id: "#882946",
     name: "Vintage shirt roll-up",
@@ -45,9 +47,12 @@ const orders = [
       "https://portal.nbaunitybar.org/tailor-api/storage/app/profile-pic/wCmgY7UuF3m2aZCPrX4uPuL3yaqkLRM0GhD9FaEn.jpg",
   },
 ];
-
+ */
 const OrdersGrid = () => {
   const router = useRouter();
+
+  const userOrders = useBoundStore((state) => state.userOrders);
+
   return (
     <div className="p-6 text-black">
       <div className="flex flex-row items-center justify-between mb-6">
@@ -74,21 +79,22 @@ const OrdersGrid = () => {
 
       {/* Orders Grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 ">
-        {orders.map((order, index) => (
-          <div key={index} className="p-3 rounded-3xl relative">
-            <img
-              src={order.image}
-              alt={order.name}
-              className="rounded-3xl w-full"
-            />
-            <p className="text-xs bg-black/35 text-white px-2 py-1 rounded-full inline-block mt-2 absolute top-2.5 left-6">
-              Order {order.id}
-            </p>
-            <h3 className="mt-1 text-black">{order.name}</h3>
-            <p className="text-kikaeGrey">{order.price}</p>
-            <p className="text-kikaeGrey text-sm">{order.category}</p>
-          </div>
-        ))}
+        {userOrders.length !== 0 &&
+          userOrders.map((order, index) => (
+            <div key={index} className="p-3 rounded-3xl relative">
+              <img
+                src={mediaUrlPrefix + order.product.media[0].url}
+                alt={order.name}
+                className="rounded-3xl w-full"
+              />
+              <p className="text-xs bg-black/35 text-white px-2 py-1 rounded-full inline-block mt-2 absolute top-2.5 left-6">
+                Order {order.id}
+              </p>
+              <h3 className="mt-1 text-black">{order.name}</h3>
+              <p className="text-kikaeGrey">{order.price}</p>
+              <p className="text-kikaeGrey text-sm">{order.product.thrift}</p>
+            </div>
+          ))}
       </div>
     </div>
   );

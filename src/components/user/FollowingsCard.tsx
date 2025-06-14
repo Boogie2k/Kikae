@@ -1,8 +1,9 @@
 import { ArrowBack } from "@/assets/ArrowBack";
+import { useBoundStore } from "@/store/store";
 import { useRouter } from "next/navigation";
 import React from "react";
 
-const followers = [
+/* const followers = [
   {
     name: "Abigail couture",
     image:
@@ -71,9 +72,14 @@ const followers = [
       "https://portal.nbaunitybar.org/tailor-api/storage/app/profile-pic/wCmgY7UuF3m2aZCPrX4uPuL3yaqkLRM0GhD9FaEn.jpg",
   },
 ];
+ */
 
 const FollowingGrid = () => {
   const router = useRouter();
+  const followings = useBoundStore((state) => state.userDetails?.followings);
+
+  if (!followings) return;
+
   return (
     <div className="p-6 text-black">
       <div className="flex flex-row items-center gap-6  mb-4">
@@ -85,16 +91,18 @@ const FollowingGrid = () => {
 
       {/* Following Grid */}
       <div className="grid grid-cols-4 md:grid-cols-6 gap-4">
-        {followers.map((follower, index) => (
+        {followings.map((follower, index) => (
           <div key={index} className={`flex flex-col items-center`}>
             <div className={`relative rounded-full p-1 `}>
               <img
-                src={follower.image}
-                alt={follower.name}
+                src={
+                  "https://portal.nbaunitybar.org/tailor-api/storage/app/profile-pic/wCmgY7UuF3m2aZCPrX4uPuL3yaqkLRM0GhD9FaEn.jpg"
+                }
+                alt={"A store"}
                 className="w-20 h-20 rounded-full "
               />
             </div>
-            <p className={`mt-1 text-sm`}>{follower.name}</p>
+            {/*   <p className={`mt-1 text-sm`}>{follower.store_id}</p> */}
           </div>
         ))}
       </div>
