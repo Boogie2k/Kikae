@@ -42,7 +42,7 @@ export default function Overview(): JSX.Element {
     monthly_completed_orders: [];
   }>({
     total_products: 0,
-    total_categories: 0,
+    total_categories: categories.length,
     total_users: 0,
     active_orders: 0,
     completed_orders: 0,
@@ -67,7 +67,7 @@ export default function Overview(): JSX.Element {
       setProducts(products.data);
 
       const categories = await getCategories();
-      setCategories(categories);
+      setCategories(categories.data);
 
       const users = await getAllUsers();
       setUsers(users.users);

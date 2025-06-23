@@ -6,49 +6,13 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 
 import { Arrow } from "@/assets/Arrow";
 import { Suspense, useEffect, useState } from "react";
-import { singleStoreType } from "@/types/storeType";
+
 import { getStore } from "@/networking/endpoints/vendors/getStore";
 import { mediaUrlPrefix } from "@/networking/apiUrl";
 import StoreContent from "@/components/Vendor/StoreContent";
-
-/* 
-const products = [
-  {
-    id: 1,
-    name: "Vintage shirt roll-up",
-    price: "₦60,000",
-    rating: 4.9,
-    image: "/shirt1.jpg",
-  },
-  {
-    id: 2,
-    name: "Vintage shirt roll-up",
-    price: "₦60,000",
-    rating: 4.9,
-    image: "/shirt2.jpg",
-  },
-  {
-    id: 3,
-    name: "Vintage shirt roll-up",
-    price: "₦60,000",
-    rating: 4.9,
-    image: "/shirt3.jpg",
-  },
-  {
-    id: 4,
-    name: "Vintage shirt roll-up",
-    price: "₦60,000",
-    rating: 4.9,
-    image: "/shirt4.jpg",
-  },
-  {
-    id: 5,
-    name: "Vintage shirt roll-up",
-    price: "₦60,000",
-    rating: 4.9,
-    image: "/shirt4.jpg",
-  },
-]; */
+import { useBoundStore } from "@/store/store";
+import MyModal from "@/components/Modal/Modal";
+import DeleteVendorModal from "@/components/Vendor/Modal/DeleteVendorModal";
 
 const tabs = ["products", "runway", "dashboard", "bank details", "orders"];
 
@@ -66,7 +30,10 @@ function VendorStore() {
 
   const page = useSearchParams().get("page");
 
-  const [store, setStore] = useState<singleStoreType>();
+  const store = useBoundStore((state) => state.vendorDetails);
+  const setStore = useBoundStore((state) => state.setVendorDetails);
+  const [isDeleteVendorModalVisible, setIsDeleteVendorModalVisible] =
+    useState(false);
 
   useEffect(() => {
     const handleGetStore = async () => {
@@ -78,7 +45,7 @@ function VendorStore() {
     };
 
     handleGetStore();
-  }, [params.id]);
+  }, [params.id, setStore]);
 
   if (!store) {
     return (
@@ -128,11 +95,10 @@ function VendorStore() {
             </button> */}
 
             <button
-              // disabled={isLoading}
-
+              onClick={() => setIsDeleteVendorModalVisible(true)}
               className="text-[#979797] text-base font-normal font-['DM Sans'] underline leading-[30px]"
             >
-              {"Deactivate"}
+              {"Delete"}
             </button>
           </div>
         </div>
@@ -193,6 +159,15 @@ function VendorStore() {
       </div>
 
       <StoreContent />
+      <MyModal
+        close={() => setIsDeleteVendorModalVisible(false)}
+        isVisible={isDeleteVendorModalVisible}
+      >
+        <DeleteVendorModal
+          setIsVisible={() => setIsDeleteVendorModalVisible(false)}
+          storeId={params.id}
+        />
+      </MyModal>
     </div>
   );
 }

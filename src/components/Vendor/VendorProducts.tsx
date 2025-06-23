@@ -1,24 +1,23 @@
 import { mediaUrlPrefix } from "@/networking/apiUrl";
-import { getStoreProducts } from "@/networking/endpoints/vendors/getStoreProduct";
+//import { getStoreProducts } from "@/networking/endpoints/vendors/getStoreProduct";
 import { productData } from "@/types/ProductType";
 import Image from "next/image";
-import { useParams, useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import React from "react";
 
-const VendorProducts = () => {
-  const [storeProducts, setStoreProducts] = useState<productData[]>();
-  const params = useParams<{ id: string }>();
+const VendorProducts = ({
+  storeProducts,
+}: {
+  storeProducts: productData[];
+}) => {
+  //const [storeProducts, setStoreProducts] = useState<productData[]>();
+  //  const params = useParams<{ id: string }>();
   const router = useRouter();
 
-  useEffect(() => {
-    const handleGetStoreProducts = async () => {
-      const result = await getStoreProducts(params.id);
-      console.log({ result });
-      if (result) setStoreProducts(result.data);
-    };
-    handleGetStoreProducts();
+  /*   useEffect(() => {
+ 
   }, [params.id]);
-
+ */
   if (!storeProducts || storeProducts.length == 0) {
     return <h4>No Product has been uploaded to this store</h4>;
   }

@@ -1,10 +1,11 @@
 import { useRouter, useSearchParams } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 import MyModal from "../Modal/Modal";
 import Details from "./Details";
 import { ArrowBack } from "@/assets/ArrowBack";
 import Link from "next/link";
 import { UserProfileType } from "@/types/types";
+import DeleteUserModal from "./DeleteUserModal";
 
 const UserProfile = ({
   //  user,
@@ -14,7 +15,8 @@ const UserProfile = ({
   userDetails: UserProfileType;
 }) => {
   const router = useRouter();
-
+  const [isDeleteUserModalVisible, setIsDeleteUserModalVisible] =
+    useState(false);
   const search = useSearchParams().get("details");
 
   const user = {
@@ -113,8 +115,9 @@ const UserProfile = ({
               // disabled={isLoading}
 
               className="text-[#979797] text-base font-normal font-['DM Sans'] underline leading-[30px]"
+              onClick={() => setIsDeleteUserModalVisible(true)}
             >
-              {"Deactivate"}
+              {"Delete"}
             </button>
           </div>
         </div>
@@ -165,6 +168,15 @@ const UserProfile = ({
           ))}
         </div>
       </div>
+      <MyModal
+        isVisible={isDeleteUserModalVisible}
+        close={() => setIsDeleteUserModalVisible(false)}
+      >
+        <DeleteUserModal
+          storeId={userDetails.id}
+          setIsVisible={setIsDeleteUserModalVisible}
+        />
+      </MyModal>
     </div>
   );
 };

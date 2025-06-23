@@ -10,7 +10,7 @@ export const getMyBanks = async (store_id: string) => {
         Accept: "application/json",
       },
       body: JSON.stringify({
-        store_id,
+        id: store_id,
       }),
     });
 

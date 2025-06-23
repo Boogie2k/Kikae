@@ -1,14 +1,17 @@
+"use client";
+
+import { OrderItem } from "@/types/UserOrdersTypes";
 import { useRouter } from "next/navigation";
-import React from "react";
-const financialStats = [
+import React, { useEffect } from "react";
+/* const financialStats = [
   { label: "Total sales", amount: "₦5,200,000" },
   { label: "Pending payouts", amount: "₦1,250,000" },
   { label: "Available payouts", amount: "₦3,950,000" },
   { label: "Transaction fees", amount: "₦150,000" },
   { label: "Refunds issued", amount: "₦300,000" },
-];
+]; */
 
-const orders = [
+/* const orders = [
   {
     id: 8829346,
     product: "Long sleeve T-shirts",
@@ -88,12 +91,28 @@ const orders = [
     type: "product",
   },
 ];
-
-const FinancialActivity = () => {
+ */
+const FinancialActivity = ({
+  orders,
+  financialStats,
+}: {
+  orders: OrderItem[];
+  financialStats: {
+    label: string;
+    amount: number;
+  }[];
+}) => {
   const router = useRouter();
   const goToProductPage = (type: string) => {
     router.push(`/dashboard/products/1?type=${type}`);
   };
+
+  useEffect(() => {}, []);
+
+  if (orders.length === 0) {
+    return <div>No orders found</div>;
+  }
+
   return (
     <div>
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-4">
@@ -129,21 +148,31 @@ const FinancialActivity = () => {
             <tbody>
               {orders.map((order) => (
                 <tr
-                  onClick={() => goToProductPage(order.type)}
+                  onClick={() => {
+                    if (order.product.isMakeup == "1") {
+                      goToProductPage("makeup");
+                    } else if (order.product.price == 0) {
+                      goToProductPage("freebie");
+                    } else {
+                      goToProductPage("item");
+                    }
+                  }}
                   key={order.id}
                   className=" hover:bg-gray-100 cursor-pointer"
                 >
                   <td className=" p-2">{order.id}</td>
                   <td className=" p-2  underline cursor-pointer">
-                    {order.product}
+                    {order.product.name}
                   </td>
                   <td className=" p-2">{order.price}</td>
-                  <td className=" p-2">{order.vendor}</td>
-                  <td className=" p-2">{order.customer}</td>
-                  <td className=" p-2">{order.address}</td>
-                  <td className=" p-2">{order.date}</td>
+                  <td className=" p-2">{order.product.shop.name}</td>
+                  <td className=" p-2">{order.transaction.user.fname}</td>
+                  <td className=" p-2">{order.delivery_address}</td>
+                  <td className=" p-2">
+                    {new Date(order.created_at).toLocaleDateString()}
+                  </td>
                   <td className=" p-2">{order.size}</td>
-                  <td className=" p-2">{order.qty}</td>
+                  <td className=" p-2">{order.units}</td>
                   <td
                     className={` p-2 font-bold ${
                       order.status === "Delivered"

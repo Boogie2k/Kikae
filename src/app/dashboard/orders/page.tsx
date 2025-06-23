@@ -3,8 +3,18 @@
 import FinancialActivity from "@/components/Order/FinancialActivity";
 import FeeTable from "@/components/Order/TransactionFees";
 import PayoutTable from "@/components/Order/VendorPayouts";
+import { getAllOrders } from "@/networking/endpoints/Orders/getAllOrders";
+import { getAllTransactions } from "@/networking/endpoints/Orders/getAllTransactions";
+import { getAvailablePayouts } from "@/networking/endpoints/Orders/getAvailablePayouts";
+import { getPendingPayouts } from "@/networking/endpoints/Orders/getPendingPayouts";
+import { getTotalRefunds } from "@/networking/endpoints/Orders/getTotalRefunds";
+import { getTotalSales } from "@/networking/endpoints/Orders/getTotalSales";
+import { getTransactionFees } from "@/networking/endpoints/Orders/getTransactionFees";
+
+import { useBoundStore } from "@/store/store";
+import { OrderItem } from "@/types/UserOrdersTypes";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { FaCaretDown } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
 
@@ -36,6 +46,61 @@ function FashionStore({}) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const page = searchParams.get("page");
+  const setOrderTransactionFees = useBoundStore(
+    (state) => state.setTransactionFees
+  );
+  /* 
+  const orderPayouts = useBoundStore((state) => state.pendingPayouts);
+  const orderTransactionFees = useBoundStore((state) => state.transactionFees);
+  const orderTotalSales = useBoundStore((state) => state.totalSales);
+  const setOrderPayouts = useBoundStore((state) => state.setPendingPayouts);
+
+  const setOrderTotalSales = useBoundStore((state) => state.setTotalSales);
+ */
+  const [orders, setOrders] = useState<OrderItem[]>([]);
+  const [financialStats, setFinancialStats] = useState([
+    { label: "Total sales", amount: 0 },
+    { label: "Pending payouts", amount: 0 },
+    { label: "Available payouts", amount: 0 },
+    { label: "Transaction fees", amount: 0 },
+    { label: "Refunds issued", amount: 0 },
+  ]);
+  useEffect(() => {
+    const fetchAllTransactions = async () => {
+      const transactions = await getAllTransactions();
+
+      const fetchOrders = async () => {
+        const orders = await getAllOrders();
+        console.log({ orders });
+        setOrders(orders.data);
+        const totalSales = await getTotalSales();
+        const pendingPayouts = await getPendingPayouts();
+        const availablePayouts = await getAvailablePayouts();
+        const transactionFees = await getTransactionFees();
+        const refundsIssued = await getTotalRefunds();
+        setFinancialStats([
+          { label: "Total sales", amount: totalSales.total_sales },
+          {
+            label: "Pending payouts",
+            amount: pendingPayouts.pending_payouts,
+          },
+          {
+            label: "Available payouts",
+            amount: availablePayouts.available_payouts,
+          },
+          {
+            label: "Transaction fees",
+            amount: transactionFees.total_transaction_fees,
+          },
+          { label: "Refunds issued", amount: refundsIssued.total_refunds },
+        ]);
+        console.log({ totalSales });
+      };
+      fetchOrders();
+      setOrderTransactionFees(transactions.transactions);
+    };
+    fetchAllTransactions();
+  }, [setOrderTransactionFees]);
 
   // Toggle status selection
   const toggleStatus = (status: string) => {
@@ -221,7 +286,9 @@ function FashionStore({}) {
       )}
 
       {/* Financial Stats */}
-      {page == null && <FinancialActivity />}
+      {page == null && (
+        <FinancialActivity financialStats={financialStats} orders={orders} />
+      )}
       {page == "vendor_payouts" && <PayoutTable />}
       {page == "transaction_fees_breakdown" && <FeeTable />}
     </div>

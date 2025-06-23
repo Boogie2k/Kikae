@@ -1,11 +1,15 @@
 import Image from "next/image";
 import { useParams, useSearchParams } from "next/navigation";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Dashboard from "./Dashboard";
 import BankCardList from "./BankDetails";
 
 import VendorProducts from "./VendorProducts";
 import VendorOrders from "./VendorOrders";
+import { OrderItem } from "@/types/UserOrdersTypes";
+import { getStoreOrders } from "@/networking/endpoints/vendors/getStoreOrders";
+import { productData } from "@/types/ProductType";
+import { getStoreProducts } from "@/networking/endpoints/vendors/getStoreProduct";
 
 const products = [
   {
@@ -48,11 +52,29 @@ const products = [
 const StoreContent = () => {
   const page = useSearchParams().get("page");
   const params = useParams<{ id: string }>();
+  const [storeOrders, setStoreOrders] = useState<OrderItem[]>([]);
+  const [storeProducts, setStoreProducts] = useState<productData[]>([]);
+
+  console.log({ params });
+  useEffect(() => {
+    const handleGetStoreOrders = async () => {
+      const result = await getStoreOrders(params.id);
+      setStoreOrders(result.data);
+    };
+    handleGetStoreOrders();
+
+    const handleGetStoreProducts = async () => {
+      const result = await getStoreProducts(params.id);
+      console.log({ result });
+      if (result) setStoreProducts(result.data);
+    };
+    handleGetStoreProducts();
+  }, [params.id, setStoreOrders, setStoreProducts]);
 
   return (
     <div>
       {/* Product Grid */}
-      {page === "products" && <VendorProducts />}
+      {page === "products" && <VendorProducts storeProducts={storeProducts} />}
 
       {page === "runway" && (
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-1 mt-6 ">
@@ -78,10 +100,12 @@ const StoreContent = () => {
           ))}
         </div>
       )}
-      {page === "dashboard" && <Dashboard />}
+      {page === "dashboard" && (
+        <Dashboard orders={storeOrders} storeProducts={storeProducts} />
+      )}
       {page === "bank details" && <BankCardList storeId={params.id} />}
 
-      {page === "orders" && <VendorOrders />}
+      {page === "orders" && <VendorOrders storeOrders={storeOrders} />}
     </div>
   );
 };

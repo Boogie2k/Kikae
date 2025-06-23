@@ -1,3 +1,4 @@
+import { deactivateVendorStore } from "@/networking/endpoints/vendors/deactivateVendorStore";
 import { getApprovedStores } from "@/networking/endpoints/vendors/getApprovedVendors";
 import { useBoundStore } from "@/store/store";
 import { useRouter } from "next/navigation";
@@ -57,7 +58,10 @@ const ApprovedVendors = () => {
                   <td className="px-6 py-4 ">{biz.phone}</td>
                   <td className="px-6 py-4">{biz.website}</td>
                   <td className="px-6 py-4 ">{biz.address}</td>
-                  <td className="px-6 py-4 text-kikaeGrey underline">
+                  <td
+                    onClick={() => deactivateVendorStore(biz.id)}
+                    className="px-6 py-4 text-kikaeGrey underline cursor-pointer"
+                  >
                     Deactivate
                   </td>
                 </tr>

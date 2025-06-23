@@ -21,6 +21,7 @@ export type productData = {
   fabric: string;
   drawings: { id: number; title: string; product_id: number; url: string }[];
   id: number;
+  isMakeup: "1" | "0";
   likes: [];
   locations: [];
   made_in_nigeria: boolean;

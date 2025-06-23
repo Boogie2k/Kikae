@@ -1,9 +1,17 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
-import React, { Suspense } from "react";
+import MyModal from "@/components/Modal/Modal";
+import RejectProduct from "@/components/Product/Modal/RejectProductModal";
+import { mediaUrlPrefix } from "@/networking/apiUrl";
+import { deleteProduct } from "@/networking/endpoints/products/deleteProduct";
+import { filterProductsByStatus } from "@/networking/endpoints/products/filterProductsByStatus";
+import { updateProductStatus } from "@/networking/endpoints/products/updateProductStatus";
 
-const products = [
+import type { productData } from "@/types/ProductType";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+
+/* const products = [
   {
     id: 1,
     photo:
@@ -56,7 +64,7 @@ const products = [
     size: "S, M, XL",
     type: "product",
   }),
-];
+]; */
 
 const productTypes = ["items", "makeup", "freebies"];
 
@@ -70,13 +78,63 @@ const Page = () => {
 
 const Table = () => {
   const router = useRouter();
-  const goToProductPage = (type: string) => {
-    router.push(`/dashboard/products/1?type=${type}`);
+  const goToProductPage = (id: string, type: string) => {
+    router.push(`/dashboard/products/${id}?type=${type}`);
   };
   const type = useSearchParams().get("type");
   const status = useSearchParams().get("status");
+  const [products, setProducts] = useState<productData[]>([]);
+  const [productId, setProductId] = useState("");
+  const [isVisible, setIsVisible] = useState(false);
+  const [filteredProducts, setFilteredProducts] = useState<productData[]>([]);
+
+  const filterProducts = (
+    products: productData[],
+    currentType: string | null
+  ) => {
+    if (!currentType || currentType === "items") {
+      return products;
+    }
+
+    if (currentType === "freebies") {
+      return products.filter((product) => product.price === 0);
+    }
+
+    if (currentType === "makeup") {
+      return products.filter((product) => product.isMakeup === "1");
+    }
+
+    return products;
+  };
+
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    filterProductsByStatus(
+      status as "pending" | "approved" | "unapproved"
+    ).then((res) => {
+      setProducts(res.products);
+      setFilteredProducts(filterProducts(res.products, type));
+      setLoading(false);
+    });
+  }, [status, type]);
+
+  useEffect(() => {
+    setFilteredProducts(filterProducts(products, type));
+  }, [type, products]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-kikaeBlue"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="overflow-x-auto p-4 text-black">
+      <MyModal isVisible={isVisible} close={() => setIsVisible(false)}>
+        <RejectProduct productId={productId} setIsVisible={setIsVisible} />
+      </MyModal>
       <div className="flex flex-row items-center items-center justify-between mb-6">
         <div className="w-[26.68rem]   flex justify-between items-center bg-white rounded-3xl border border-black/25 ">
           <input
@@ -158,34 +216,67 @@ const Table = () => {
           </tr>
         </thead>
         <tbody>
-          {products.map((item, index) => (
-            <tr key={index} className="hover:bg-gray-100">
-              <td className="p-3">
-                <img
-                  src={item.photo}
-                  alt={item.name}
-                  className="w-10 h-10 rounded"
-                />
-              </td>
-              <td
-                onClick={() => {
-                  goToProductPage(item.type);
-                }}
-                className="p-3  underline cursor-pointer"
-              >
-                {item.name}
-              </td>
-              <td className="p-3">₦{item.price.toLocaleString()}</td>
-              <td className="p-3">₦{item.oldPrice.toLocaleString()}</td>
-              <td className="p-3">{item.category}</td>
-              <td className="p-3">{item.subCategory}</td>
-              <td className="p-3">{item.units.toLocaleString()}</td>
-              <td className="p-3">{item.size}</td>
-              <td className="p-3 text-kikaeGrey underline  cursor-pointer">
-                Delete
+          {filteredProducts?.length > 0 ? (
+            filteredProducts.map((item, index) => (
+              <tr key={index} className="hover:bg-gray-100">
+                <td className="p-3">
+                  <img
+                    src={
+                      mediaUrlPrefix + item.media[0].url || "/placeholder.svg"
+                    }
+                    alt={item.name}
+                    className="w-10 h-10 rounded"
+                  />
+                </td>
+                <td
+                  onClick={() => {
+                    goToProductPage(item.id.toString(), type as string);
+                  }}
+                  className="p-3  underline cursor-pointer"
+                >
+                  {item.name}
+                </td>
+                <td className="p-3">₦{item.price.toLocaleString()}</td>
+                <td className="p-3">₦{item.old_price.toLocaleString()}</td>
+                <td className="p-3">{item.category.name}</td>
+                <td className="p-3">{item.product_category.name}</td>
+                <td className="p-3">{item.units.toLocaleString()}</td>
+                <td className="p-3">{item.size}</td>
+                {status == "pending" ? (
+                  <td className="px-6 py-4 flex flex-row gap-2.5">
+                    <button
+                      onClick={() => updateProductStatus(item.id, "approved")}
+                      className="text-kikaeBlue underline"
+                    >
+                      Accept
+                    </button>
+                    <button
+                      onClick={() => {
+                        setIsVisible(true);
+                        setProductId(item.id.toString());
+                      }}
+                      className="text-red-500 underline"
+                    >
+                      Reject
+                    </button>
+                  </td>
+                ) : (
+                  <td
+                    onClick={() => deleteProduct(item.id)}
+                    className="p-3 text-kikaeGrey underline  cursor-pointer"
+                  >
+                    Delete
+                  </td>
+                )}
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={7} className="text-center">
+                No products found
               </td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
     </div>

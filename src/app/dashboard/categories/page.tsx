@@ -1,79 +1,13 @@
 "use client";
 
 import ModalDetails from "@/components/Categories/ModalDetails";
-
 import MyModal from "@/components/Modal/Modal";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, Suspense } from "react";
+import { useState, Suspense, useEffect } from "react";
+import { getCategories } from "@/networking/endpoints/categories/getCategories";
+import { getSubCategories } from "@/networking/endpoints/categories/getSubCategories";
 
-const categoriesData = [
-  {
-    category: "Men's Clothing",
-    subcategories: "Shirts, Pants, Jackets, Suits, T-Shirts, Hoodies",
-    items: 100,
-  },
-  {
-    category: "Women's Clothing",
-    subcategories: "Dresses, Skirts, Tops, Trousers, Jumpsuits, Blouses",
-    items: 10000,
-  },
-  {
-    category: "Footwear",
-    subcategories: "Sneakers, Formal Shoes, Sandals, Boots, Flats, Heels",
-    items: 854,
-  },
-  {
-    category: "Bags & Accessories",
-    subcategories: "Handbags, Backpacks, Wallets, Belts, Sunglasses, Hats",
-    items: 9482,
-  },
-  {
-    category: "Jewelry",
-    subcategories: "Necklaces, Bracelets, Earrings, Rings, Watches",
-    items: 249,
-  },
-  {
-    category: "Haircare",
-    subcategories:
-      "Shampoo, Conditioner, Hair Serums, Hair Masks, Wigs, Extensions",
-    items: 45,
-  },
-  {
-    category: "Skincare",
-    subcategories:
-      "Moisturizers, Cleansers, Toners, Face Masks, Sunscreens, Exfoliators",
-    items: 748,
-  },
-  {
-    category: "Fragrances",
-    subcategories: "Perfumes, Body Sprays, Deodorants, Roll-Ons",
-    items: 27,
-  },
-  {
-    category: "Beauty Tools",
-    subcategories:
-      "Makeup Brushes, Blenders, Hair Dryers, Curling Irons, Nail Kits",
-    items: 64,
-  },
-  {
-    category: "Kids' Clothing",
-    subcategories:
-      "Baby Onesies, Kids' T-Shirts, Kids' Pants, Dresses, Jackets",
-    items: 1394,
-  },
-  {
-    category: "Activewear",
-    subcategories:
-      "Sports Bras, Leggings, Track Pants, Gym Shorts, Sweatshirts, Shoes",
-    items: 384,
-  },
-  {
-    category: "Sleepwear",
-    subcategories: "Pajamas, Nightgowns, Robes, Slippers, Sleep Masks",
-    items: 485,
-  },
-];
 const Page = () => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
@@ -84,14 +18,65 @@ const Page = () => {
 
 function CategoriesTable() {
   const [search, setSearch] = useState("");
+  const [activeView, setActiveView] = useState<"categories" | "subcategories">(
+    "categories"
+  );
+  const [categories, setCategories] = useState<
+    {
+      id: number;
+      name: string;
+      description: string;
+    }[]
+  >([]);
+  const [subcategories, setSubcategories] = useState<
+    {
+      id: number;
+      name: string;
+      description: string;
+    }[]
+  >([]);
+  const [loading, setLoading] = useState(false);
 
   const action = useSearchParams().get("action");
-  const filteredCategories = categoriesData.filter(
-    (category) =>
-      category.category.toLowerCase().includes(search.toLowerCase()) ||
-      category.subcategories.toLowerCase().includes(search.toLowerCase())
-  );
   const router = useRouter();
+
+  // Prepare data based on active view
+  const getDisplayData = () => {
+    if (activeView === "categories") {
+      return (
+        categories &&
+        categories.length > 0 &&
+        categories.filter((category) =>
+          category.name?.toLowerCase().includes(search.toLowerCase())
+        )
+      );
+    } else {
+      return (
+        subcategories &&
+        subcategories.length > 0 &&
+        subcategories.filter((subcategory) =>
+          subcategory.name?.toLowerCase().includes(search.toLowerCase())
+        )
+      );
+    }
+  };
+
+  const displayData = getDisplayData();
+  const handleGetCategories = async () => {
+    const categories = await getCategories();
+    setCategories(categories.data);
+  };
+  const handleGetSubCategories = async () => {
+    const subcategories = await getSubCategories();
+    setSubcategories(subcategories);
+  };
+
+  useEffect(() => {
+    setLoading(true);
+    handleGetCategories();
+    handleGetSubCategories();
+    setLoading(false);
+  }, []);
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
@@ -99,53 +84,121 @@ function CategoriesTable() {
         isVisible={action == "add" || action == "edit" || action == "delete"}
         close={() => router.back()}
       >
-        <ModalDetails />
+        <ModalDetails getCategories={handleGetCategories} />
       </MyModal>
+
       <div className="flex justify-between items-center mb-4">
         <input
           type="text"
-          placeholder="Search for categories or subcategories"
+          placeholder={`Search for ${activeView}`}
           className="border p-2 rounded w-1/3"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <Link href={`?action=${"add"}`} className="text-blue-500">
-          Add new category
+        <Link href={`?action=add`} className="text-blue-500">
+          Add new {activeView.slice(0, -1)}
         </Link>
       </div>
+
+      {/* Toggle Buttons */}
+      <div className="flex gap-2 mb-4">
+        <button
+          onClick={() => setActiveView("categories")}
+          className={`px-4 py-2 rounded ${
+            activeView === "categories"
+              ? "bg-blue-500 text-white"
+              : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+          }`}
+        >
+          Categories
+        </button>
+        <button
+          onClick={() => setActiveView("subcategories")}
+          className={`px-4 py-2 rounded ${
+            activeView === "subcategories"
+              ? "bg-blue-500 text-white"
+              : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+          }`}
+        >
+          Subcategories
+        </button>
+      </div>
+
       <table className="w-full text-black rounded-3xl shadow-sm">
         <thead className="text-kikaeBlue">
           <tr>
-            <th className="p-2 text-left">Categories</th>
-            <th className="p-2 text-left">Subcategories</th>
+            <th className="p-2 text-left">
+              {activeView === "categories" ? "Category" : "Subcategory"}
+            </th>
+            {activeView === "subcategories" && (
+              <th className="p-2 text-left">Parent Category</th>
+            )}
             <th className="p-2 text-right">No. of items</th>
             <th className="p-2 text-center">Actions</th>
           </tr>
         </thead>
         <tbody>
-          {filteredCategories.map((cat, index) => (
-            <tr key={index}>
-              <td className="p-2 text-black underline cursor-pointer">
-                {cat.category}
-              </td>
-              <td className="p-2">{cat.subcategories}</td>
-              <td className="p-2 text-right">{cat.items}</td>
-              <td className="p-2 text-center space-x-2">
-                <Link
-                  href={`?action=${"edit"}`}
-                  className="text-black underline"
-                >
-                  Edit
-                </Link>
-                <Link
-                  href={`?action=${"delete"}`}
-                  className="text-kikaeGrey underline"
-                >
-                  Delete
-                </Link>
+          {loading ? (
+            <tr>
+              <td
+                colSpan={activeView === "categories" ? 3 : 4}
+                className="p-4 text-center"
+              >
+                Loading...
               </td>
             </tr>
-          ))}
+          ) : activeView === "categories" ? (
+            displayData &&
+            displayData.length > 0 &&
+            displayData.map((cat, index) => (
+              <tr key={cat.id || index}>
+                <td className="p-2 text-black underline cursor-pointer">
+                  {cat.name}
+                </td>
+                <td className="p-2 text-right"></td>
+                <td className="p-2 text-center space-x-2">
+                  <Link
+                    href={`?action=edit&&id=${cat.id}`}
+                    className="text-black underline"
+                  >
+                    Edit
+                  </Link>
+                  <Link
+                    href={`?action=delete&&id=${cat.id} `}
+                    className="text-kikaeGrey underline"
+                  >
+                    Delete
+                  </Link>
+                </td>
+              </tr>
+            ))
+          ) : (
+            displayData &&
+            displayData.length > 0 &&
+            displayData.map((subcat, index) => (
+              <tr key={subcat.id || index}>
+                <td className="p-2 text-black underline cursor-pointer">
+                  {subcat.name}
+                </td>
+                <td className="p-2 text-gray-600"></td>
+                <td className="p-2 text-right"></td>
+                <td className="p-2 text-center space-x-2">
+                  <Link
+                    href={`?action=edit&&id=${subcat.id}`}
+                    className="text-black underline"
+                  >
+                    Edit
+                  </Link>
+                  <Link
+                    href={`?action=delete&&id=${subcat.id}`}
+                    className="text-kikaeGrey underline"
+                  >
+                    Delete
+                  </Link>
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>

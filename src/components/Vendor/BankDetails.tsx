@@ -63,7 +63,13 @@ const BankCardList = ({ storeId }: { storeId: string }) => {
     <div className="flex flex-wrap gap-6 mt-6">
       {bankAccounts?.length !== 0 &&
         bankAccounts?.map((account, index) => (
-          <BankCard key={index} {...account} />
+          <BankCard
+            key={index}
+            name={account.account_name}
+            accountNumber={account.number}
+            bank={account.bank}
+            isDefault={account.isDefault}
+          />
         ))}
     </div>
   );
