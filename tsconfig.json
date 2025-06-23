@@ -28,7 +28,8 @@
     ".next/types/**/*.ts",
     "src/app/dashboard/users/[id]",
     "src/app/dashboard/users/audit_trail",
-    "src/components/Categories"
+    "src/components/Categories",
+    "src/app/dashboard/runway/[id]"
   ],
   "exclude": ["node_modules"]
 }
