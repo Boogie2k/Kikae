@@ -103,8 +103,8 @@ const FinancialActivity = ({
   }[];
 }) => {
   const router = useRouter();
-  const goToProductPage = (type: string) => {
-    router.push(`/dashboard/products/1?type=${type}`);
+  const goToProductPage = (productId: string | number, type: string) => {
+    router.push(`/dashboard/products/${productId}?type=${type}`);
   };
 
   useEffect(() => {}, []);
@@ -150,11 +150,11 @@ const FinancialActivity = ({
                 <tr
                   onClick={() => {
                     if (order.product.isMakeup == "1") {
-                      goToProductPage("makeup");
+                      goToProductPage(order.product.id, "makeup");
                     } else if (order.product.price == 0) {
-                      goToProductPage("freebie");
+                      goToProductPage(order.product.id, "freebies");
                     } else {
-                      goToProductPage("item");
+                      goToProductPage(order.product.id, "product");
                     }
                   }}
                   key={order.id}
