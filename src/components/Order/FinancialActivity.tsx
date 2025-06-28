@@ -109,22 +109,23 @@ const FinancialActivity = ({
 
   useEffect(() => {}, []);
 
-  if (orders.length === 0) {
+  if (orders?.length === 0) {
     return <div>No orders found</div>;
   }
 
   return (
     <div>
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-4">
-        {financialStats.map((stat) => (
-          <div
-            key={stat.label}
-            className="p-4 border rounded-md shadow-sm text-center"
-          >
-            <p className="text-gray-500 text-sm">{stat.label}</p>
-            <p className="text-lg font-bold">{stat.amount}</p>
-          </div>
-        ))}
+        {financialStats &&
+          financialStats.map((stat) => (
+            <div
+              key={stat.label}
+              className="p-4 border rounded-md shadow-sm text-center"
+            >
+              <p className="text-gray-500 text-sm">{stat.label}</p>
+              <p className="text-lg font-bold">{stat.amount}</p>
+            </div>
+          ))}
       </div>
 
       {
@@ -146,51 +147,52 @@ const FinancialActivity = ({
               </tr>
             </thead>
             <tbody>
-              {orders.map((order) => (
-                <tr
-                  onClick={() => {
-                    if (order.product.isMakeup == "1") {
-                      goToProductPage(order.product.id, "makeup");
-                    } else if (order.product.price == 0) {
-                      goToProductPage(order.product.id, "freebies");
-                    } else {
-                      goToProductPage(order.product.id, "product");
-                    }
-                  }}
-                  key={order.id}
-                  className=" hover:bg-gray-100 cursor-pointer"
-                >
-                  <td className=" p-2">{order.id}</td>
-                  <td className=" p-2  underline cursor-pointer">
-                    {order.product.name}
-                  </td>
-                  <td className=" p-2">{order.price}</td>
-                  <td className=" p-2">{order.product.shop.name}</td>
-                  <td className=" p-2">{order.transaction.user.fname}</td>
-                  <td className=" p-2">{order.delivery_address}</td>
-                  <td className=" p-2">
-                    {new Date(order.created_at).toLocaleDateString()}
-                  </td>
-                  <td className=" p-2">{order.size}</td>
-                  <td className=" p-2">{order.units}</td>
-                  <td
-                    className={` p-2 font-bold ${
-                      order.status === "Delivered"
-                        ? "text-green-600"
-                        : order.status === "Out for delivery"
-                        ? "text-orange-500"
-                        : order.status === "Returned"
-                        ? "text-red-500"
-                        : "text-blue-500"
-                    }`}
+              {orders &&
+                orders.map((order) => (
+                  <tr
+                    onClick={() => {
+                      if (order.product.isMakeup == "1") {
+                        goToProductPage(order.product.id, "makeup");
+                      } else if (order.product.price == 0) {
+                        goToProductPage(order.product.id, "freebies");
+                      } else {
+                        goToProductPage(order.product.id, "product");
+                      }
+                    }}
+                    key={order.id}
+                    className=" hover:bg-gray-100 cursor-pointer"
                   >
-                    {order.status}
-                  </td>
-                  <td className=" p-2 text-kikaeGrey underline cursor-pointer">
-                    View
-                  </td>
-                </tr>
-              ))}
+                    <td className=" p-2">{order.id}</td>
+                    <td className=" p-2  underline cursor-pointer">
+                      {order.product.name}
+                    </td>
+                    <td className=" p-2">{order.price}</td>
+                    <td className=" p-2">{order.product.shop.name}</td>
+                    <td className=" p-2">{order.transaction.user.fname}</td>
+                    <td className=" p-2">{order.delivery_address}</td>
+                    <td className=" p-2">
+                      {new Date(order.created_at).toLocaleDateString()}
+                    </td>
+                    <td className=" p-2">{order.size}</td>
+                    <td className=" p-2">{order.units}</td>
+                    <td
+                      className={` p-2 font-bold ${
+                        order.status === "Delivered"
+                          ? "text-green-600"
+                          : order.status === "Out for delivery"
+                          ? "text-orange-500"
+                          : order.status === "Returned"
+                          ? "text-red-500"
+                          : "text-blue-500"
+                      }`}
+                    >
+                      {order.status}
+                    </td>
+                    <td className=" p-2 text-kikaeGrey underline cursor-pointer">
+                      View
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>

@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { useParams, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import Dashboard from "./Dashboard";
@@ -10,50 +9,16 @@ import { OrderItem } from "@/types/UserOrdersTypes";
 import { getStoreOrders } from "@/networking/endpoints/vendors/getStoreOrders";
 import { productData } from "@/types/ProductType";
 import { getStoreProducts } from "@/networking/endpoints/vendors/getStoreProduct";
-
-const products = [
-  {
-    id: 1,
-    name: "Vintage shirt roll-up",
-    price: "₦60,000",
-    rating: 4.9,
-    image: "/shirt1.jpg",
-  },
-  {
-    id: 2,
-    name: "Vintage shirt roll-up",
-    price: "₦60,000",
-    rating: 4.9,
-    image: "/shirt2.jpg",
-  },
-  {
-    id: 3,
-    name: "Vintage shirt roll-up",
-    price: "₦60,000",
-    rating: 4.9,
-    image: "/shirt3.jpg",
-  },
-  {
-    id: 4,
-    name: "Vintage shirt roll-up",
-    price: "₦60,000",
-    rating: 4.9,
-    image: "/shirt4.jpg",
-  },
-  {
-    id: 5,
-    name: "Vintage shirt roll-up",
-    price: "₦60,000",
-    rating: 4.9,
-    image: "/shirt4.jpg",
-  },
-];
+import { Runway } from "@/types/runwayVideosType";
+import { getStoreRunwayVideos } from "@/networking/endpoints/runway/getStoreRunwayVideos";
+import StoreRunwayVideos from "./StoreRunwayVideos";
 
 const StoreContent = () => {
   const page = useSearchParams().get("page");
   const params = useParams<{ id: string }>();
   const [storeOrders, setStoreOrders] = useState<OrderItem[]>([]);
   const [storeProducts, setStoreProducts] = useState<productData[]>([]);
+  const [storeRunwayVideos, setStoreRunwayVideos] = useState<Runway[]>([]);
 
   console.log({ params });
   useEffect(() => {
@@ -69,6 +34,14 @@ const StoreContent = () => {
       if (result) setStoreProducts(result.data);
     };
     handleGetStoreProducts();
+
+    const handleGetStoreRunwayVideos = async () => {
+      const result = await getStoreRunwayVideos(params.id);
+      if (result) {
+        setStoreRunwayVideos(result.data);
+      }
+    };
+    handleGetStoreRunwayVideos();
   }, [params.id, setStoreOrders, setStoreProducts]);
 
   return (
@@ -77,28 +50,7 @@ const StoreContent = () => {
       {page === "products" && <VendorProducts storeProducts={storeProducts} />}
 
       {page === "runway" && (
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-1 mt-6 ">
-          {products.map((product) => (
-            <div key={product.id} className="rounded-3xl relative">
-              <Image
-                src={product.image}
-                alt={product.name}
-                width={183}
-                height={204}
-                className="rounded-3xl w-[183px] h-[204px] h-40 object-cover"
-              />
-              <h2 className="text-base font-openSansRegular mt-2 text-black">
-                {product.name}
-              </h2>
-              <p className="text-kikaeGrey font-openSansRegular">
-                {product.price}
-              </p>
-              <p className="text-white bg-black/50 absolute top-3.5 left-3.5 px-1 py-1 rounded-2xl">
-                ⭐ {product.rating}
-              </p>
-            </div>
-          ))}
-        </div>
+        <StoreRunwayVideos storeRunwayVideos={storeRunwayVideos} />
       )}
       {page === "dashboard" && (
         <Dashboard orders={storeOrders} storeProducts={storeProducts} />

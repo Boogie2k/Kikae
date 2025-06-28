@@ -20,13 +20,14 @@ const Dashboard = ({
 }) => {
   const router = useRouter();
   const store = useBoundStore((state) => state.vendorDetails);
-  const [dateRange, setDateRange] = useState({
-    from: "2024-01-01",
-    to: "2024-12-31",
-  });
+
   const params = useParams();
   const metricParam = useSearchParams().get("metric");
 
+  const [dateRange, setDateRange] = useState({
+    from: "2025-01-01",
+    to: "2025-12-31",
+  });
   const metrics = [
     "sales metrics",
     "product performance",
@@ -187,18 +188,20 @@ const Dashboard = ({
             <input
               type="date"
               value={dateRange.from}
-              onChange={(e) =>
-                setDateRange({ ...dateRange, from: e.target.value })
-              }
+              onChange={(e) => {
+                setDateRange({ ...dateRange, from: e.target.value });
+                setStartDate(new Date(e.target.value));
+              }}
               className="rounded-3xl p-2"
             />
             <span>to</span>
             <input
               type="date"
               value={dateRange.to}
-              onChange={(e) =>
-                setDateRange({ ...dateRange, to: e.target.value })
-              }
+              onChange={(e) => {
+                setDateRange({ ...dateRange, to: e.target.value });
+                setEndDate(new Date(e.target.value));
+              }}
               className="rounded-3xl  p-2"
             />
             <button className="bg-kikaeBlue text-white py-2 px-4 rounded-3xl">
@@ -208,11 +211,17 @@ const Dashboard = ({
           {metricParam == "sales_metrics" && (
             <SalesMetrics salesData={salesData} />
           )}
-          {metricParam == "financial_metrics" && <FinancialMetrics />}
+          {metricParam == "financial_metrics" && (
+            <FinancialMetrics orders={orders} />
+          )}
           {metricParam == "logistics_metrics" && <LogisticsMetrics />}
-          {metricParam == "product_performance" && <ProductPerformance />}
+          {metricParam == "product_performance" && (
+            <ProductPerformance salesData={salesData} />
+          )}
 
-          {metricParam == "customer_engagement" && <CustomerEngagement />}
+          {metricParam == "customer_engagement" && (
+            <CustomerEngagement products={storeProducts} />
+          )}
         </div>
       </div>
     </div>

@@ -19,8 +19,8 @@ import { useEffect, useState } from "react";
 
 export default function AllVideos() {
   const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
-  const totalPages = 800;
+  /*   const [page, setPage] = useState(1);
+  const totalPages = 800; */
 
   const allRunwayVideos = useBoundStore((state) => state.allRunwayVideos);
   const setAllRunwayVideos = useBoundStore((state) => state.setAllRunwaVideos);
@@ -77,11 +77,7 @@ export default function AllVideos() {
                     onClick={() => router.push(`/dashboard/runway/${row.id}`)}
                     className="p-2"
                   >
-                    <img
-                      src="https://portal.nbaunitybar.org/tailor-api/storage/app/profile-pic/wCmgY7UuF3m2aZCPrX4uPuL3yaqkLRM0GhD9FaEn.jpg"
-                      alt="Video"
-                      className="w-8 h-8"
-                    />
+                    <img src="/img/logo.png" alt="Video" className="w-8 h-8" />
                   </td>
                   <td
                     onClick={() => router.push(`/dashboard/runway/${row.id}`)}
@@ -95,7 +91,7 @@ export default function AllVideos() {
                     <td key={index} className="p-2">
                       {item ? (
                         <img
-                          src={item.id}
+                          src="/img/logo.png"
                           alt={`Item ${index + 1}`}
                           className="w-8 h-8"
                         />
@@ -114,7 +110,7 @@ export default function AllVideos() {
           </tbody>
         </table>
       </div>
-      <div className="flex justify-between items-center mt-4">
+      {/*   <div className="flex justify-between items-center mt-4">
         <span>Showing 12 of 100,000 results</span>
         <div className="flex items-center gap-2">
           <button
@@ -135,7 +131,7 @@ export default function AllVideos() {
             ▶
           </button>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

@@ -1,4 +1,5 @@
 export type singleStoreType = {
+  active: "1" | "0";
   address: string;
   animation: string | null;
   background_image: string | null;

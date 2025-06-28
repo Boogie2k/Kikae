@@ -23,7 +23,11 @@ import React from "react";
 const SalesMetrics = ({
   salesData,
 }: {
-  salesData: { name: string; views: number; sales: number }[];
+  salesData: {
+    product_name: string;
+    total_revenue: number;
+    units_sold: number;
+  }[];
 }) => {
   return (
     <div>
@@ -46,9 +50,15 @@ const SalesMetrics = ({
           {salesData &&
             salesData.map((product, index: number) => (
               <tr key={index} className="text-center">
-                <td className="border border-gray-300 p-2">{product.name}</td>
-                <td className="border border-gray-300 p-2">{product.views}</td>
-                <td className="border border-gray-300 p-2">{product.sales}</td>
+                <td className="border border-gray-300 p-2">
+                  {product.product_name}
+                </td>
+                <td className="border border-gray-300 p-2">
+                  {product.units_sold}
+                </td>
+                <td className="border border-gray-300 p-2">
+                  {product.total_revenue}
+                </td>
               </tr>
             ))}
         </tbody>

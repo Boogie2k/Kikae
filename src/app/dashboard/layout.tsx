@@ -1,6 +1,5 @@
 "use client";
-import DeleteAdminModal from "@/components/DeleteAdminModal";
-import IncreaseLimitModal from "@/components/IncreaseLimitModal";
+
 import Modal from "@/components/Modal";
 import Sidebar from "@/components/Sidebar";
 import React from "react";
@@ -18,8 +17,6 @@ export default function DashboardLayout({
       </aside>
 
       <Modal text="Are you sure you want to delete this item?" />
-      <DeleteAdminModal text="Are you sure you want to delete this item?" />
-      <IncreaseLimitModal />
 
       {/* Main Content */}
       <div className="flex-1 flex justify-center pl-[16.625rem]">
