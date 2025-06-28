@@ -1,25 +1,35 @@
 "use client";
 import { ArrowBack } from "@/assets/ArrowBack";
+import Loader from "@/components/Loader";
+import { handleRegisterAdmin } from "@/networking/endpoints/register";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-export default function CreateAdminUser(): JSX.Element {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+export default function CreateAdminUser() {
+  const [name, setName] = useState("");
+  //const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [selectedRole, setSelectedRole] = useState("Vendor admin");
+  // const [selectedRole, setSelectedRole] = useState("Vendor admin");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const roles = [
+  /*   const roles = [
     "Sub admin",
     "Vendor admin",
     "Finance admin",
     "Logistics admin",
     "Marketing admin",
     "Support admin",
-  ];
+  ]; */
+
+  const createAdmin = async () => {
+    setIsLoading(true);
+    const result = await handleRegisterAdmin(email, password, password, name);
+    setIsLoading(false);
+    console.log({ result });
+  };
 
   return (
     <div className="p-6 space-y-6 text-black">
@@ -35,8 +45,12 @@ export default function CreateAdminUser(): JSX.Element {
           </button>
           <h2 className="font-semibold text-xl">Create an admin user</h2>
         </div>
-        <button className="bg-blue-600 text-white px-6 py-2 rounded-full">
-          Create admin user
+        <button
+          onClick={createAdmin}
+          type="button"
+          className="bg-blue-600 text-white px-6 py-2 rounded-full"
+        >
+          {isLoading ? <Loader /> : "Create admin user"}
         </button>
       </div>
 
@@ -45,17 +59,17 @@ export default function CreateAdminUser(): JSX.Element {
           <input
             type="text"
             placeholder="First Name"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
             className="w-full border p-2 rounded"
           />
-          <input
+          {/*  <input
             type="text"
             placeholder="Last Name"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
             className="w-full border p-2 rounded"
-          />
+          /> */}
           <input
             type="email"
             placeholder="Email"
@@ -82,7 +96,7 @@ export default function CreateAdminUser(): JSX.Element {
           />
         </div>
 
-        <div>
+        {/*     <div>
           <p className="font-medium mb-2">Select a role for this user:</p>
           <div className="flex flex-wrap gap-4">
             {roles.map((role) => (
@@ -106,7 +120,7 @@ export default function CreateAdminUser(): JSX.Element {
               </label>
             ))}
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

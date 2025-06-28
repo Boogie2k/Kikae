@@ -1,6 +1,6 @@
 import React from "react";
 
-const products = [
+/* const products = [
   { name: "T-shirt and sleeves", views: 1, sales: 5 },
   { name: "Long sleeves", views: 2, sales: 10 },
   { name: "Jean trouser", views: 3, sales: 30 },
@@ -18,9 +18,17 @@ const products = [
   { name: "Glam Makeup", views: 65, sales: 893 },
   { name: "Glam Makeup", views: 70, sales: 899 },
   { name: "Glam Makeup", views: 80, sales: 902 },
-];
+]; */
 
-const SalesMetrics = () => {
+const SalesMetrics = ({
+  salesData,
+}: {
+  salesData: {
+    product_name: string;
+    total_revenue: number;
+    units_sold: number;
+  }[];
+}) => {
   return (
     <div>
       <p className="text-gray-700">
@@ -39,13 +47,20 @@ const SalesMetrics = () => {
           </tr>
         </thead>
         <tbody>
-          {products.map((product, index) => (
-            <tr key={index} className="text-center">
-              <td className="border border-gray-300 p-2">{product.name}</td>
-              <td className="border border-gray-300 p-2">{product.views}</td>
-              <td className="border border-gray-300 p-2">{product.sales}</td>
-            </tr>
-          ))}
+          {salesData &&
+            salesData.map((product, index: number) => (
+              <tr key={index} className="text-center">
+                <td className="border border-gray-300 p-2">
+                  {product.product_name}
+                </td>
+                <td className="border border-gray-300 p-2">
+                  {product.units_sold}
+                </td>
+                <td className="border border-gray-300 p-2">
+                  {product.total_revenue}
+                </td>
+              </tr>
+            ))}
         </tbody>
       </table>
     </div>

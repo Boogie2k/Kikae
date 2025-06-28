@@ -1,14 +1,37 @@
 "use client";
-import React from "react";
+import React, { Suspense, useEffect } from "react";
 
 import { useRouter, useSearchParams } from "next/navigation";
 import Users from "@/components/user/Users";
+import { getUsers } from "@/networking/endpoints/getUsers";
+import { useBoundStore } from "@/store/store";
+
+const Page = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <UserTable />
+    </Suspense>
+  );
+};
 
 const UserTable = () => {
   const router = useRouter();
+  // const users = useBoundStore((state) => state.allUsers);
+  const setUsers = useBoundStore((state) => state.setAllUsers);
 
   const type = useSearchParams().get("type");
   const status = useSearchParams().get("status");
+
+  useEffect(() => {
+    const handleGetUsers = async () => {
+      const result = await getUsers();
+      if (!result) return;
+
+      setUsers(result.users);
+    };
+
+    handleGetUsers();
+  }, [setUsers]);
 
   return (
     <div className="pt-6 pr-6">
@@ -88,4 +111,4 @@ const UserTable = () => {
   );
 };
 
-export default UserTable;
+export default Page;

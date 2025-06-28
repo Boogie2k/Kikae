@@ -1,36 +1,13 @@
 import { ArrowBack } from "@/assets/ArrowBack";
+import { useBoundStore } from "@/store/store";
 import { useRouter } from "next/navigation";
 import React from "react";
 
-const addresses = [
-  {
-    name: "OSAS EMMA",
-    phone: "09045386266",
-    address:
-      "No. 10B, Ladipoe street, off Lekki Estate, Lekki Phase 1, Lekki-Epe Expy, Eti-Osa 106104, Lagos",
-  },
-  {
-    name: "OSAS EMMA",
-    phone: "09045386266",
-    address:
-      "No. 10B, Ladipoe street, off Lekki Estate, Lekki Phase 1, Lekki-Epe Expy, Eti-Osa 106104, Lagos",
-  },
-  {
-    name: "OSAS EMMA",
-    phone: "09045386266",
-    address:
-      "No. 10B, Ladipoe street, off Lekki Estate, Lekki Phase 1, Lekki-Epe Expy, Eti-Osa 106104, Lagos",
-  },
-  {
-    name: "OSAS EMMA",
-    phone: "09045386266",
-    address:
-      "No. 10B, Ladipoe street, off Lekki Estate, Lekki Phase 1, Lekki-Epe Expy, Eti-Osa 106104, Lagos",
-  },
-];
-
 const AddressCards = () => {
   const router = useRouter();
+  const addresses = useBoundStore((state) => state.userDetails?.addresses);
+
+  if (!addresses) return null;
   return (
     <div className="p-6">
       <div className="flex items-center text-black mb-6 gap-6">
@@ -45,7 +22,7 @@ const AddressCards = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {addresses.map((item, index) => (
           <div key={index} className="bg-white p-6 rounded-xl ">
-            <p className="text-blue-600 font-semibold">{item.name}</p>
+            <p className="text-blue-600 font-semibold">{item.fname}</p>
             <p className="text-gray-500 text-sm">{item.phone}</p>
             <p className="text-gray-700 mt-2">{item.address}</p>
           </div>

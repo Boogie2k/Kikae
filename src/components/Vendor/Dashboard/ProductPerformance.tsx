@@ -1,5 +1,5 @@
 import React from "react";
-const products = [
+/* const products = [
   {
     prodcts: "fine T-shirt",
     No_sold: 5,
@@ -30,9 +30,16 @@ const products = [
     No_sold: 5,
     revenue_generated: 5000,
   },
-];
-
-const ProductPerformance = () => {
+]; */
+const ProductPerformance = ({
+  salesData,
+}: {
+  salesData: {
+    product_name: string;
+    total_revenue: number;
+    units_sold: number;
+  }[];
+}) => {
   return (
     <div>
       <p className="text-gray-700">
@@ -54,13 +61,13 @@ const ProductPerformance = () => {
           </tr>
         </thead>
         <tbody>
-          {products.map((product, index) => (
+          {salesData.map((sales, index) => (
             <tr key={index} className="text-center">
-              <td className="border border-gray-300 p-2">{product.prodcts}</td>
-              <td className="border border-gray-300 p-2">{product.No_sold}</td>
               <td className="border border-gray-300 p-2">
-                {product.revenue_generated}
+                {sales.product_name}
               </td>
+              <td className="border border-gray-300 p-2">{0}</td>
+              <td className="border border-gray-300 p-2">{sales.units_sold}</td>
             </tr>
           ))}
         </tbody>

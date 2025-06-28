@@ -1,8 +1,21 @@
 "use client";
+import { rejectVendorStore } from "@/networking/endpoints/vendors/rejectVendor";
 import React, { useState } from "react";
 
-const RejectVendor = () => {
+const RejectVendor = ({
+  storeId,
+  setIsVisible,
+}: {
+  storeId: string;
+  setIsVisible: (value: boolean) => void;
+}) => {
   const [reason, setReason] = useState("");
+
+  const handleRejectVendor = async () => {
+    await rejectVendorStore(storeId);
+
+    setIsVisible(false);
+  };
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center text-black">
       <div className="bg-white p-6 rounded-3xl shadow-md w-96 ">
@@ -24,13 +37,13 @@ const RejectVendor = () => {
         <div className="flex justify-between mt-6">
           <button
             className="border px-4 py-2 rounded-3xl"
-            //   onClick={() => setIsModalOpen(false)}
+            onClick={() => setIsVisible(false)}
           >
             Cancel
           </button>{" "}
           <button
             className="bg-blue-500 text-white px-4 py-2 rounded-3xl"
-            //  onClick={() => setIsModalOpen(false)}
+            onClick={handleRejectVendor}
           >
             Reject
           </button>

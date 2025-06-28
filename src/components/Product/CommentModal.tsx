@@ -1,7 +1,11 @@
-import React, { useState } from "react";
+import { getProductComments } from "@/networking/endpoints/products/getProductComments";
+import { getProductReviews } from "@/networking/endpoints/products/getProductReviews";
+import { UserProfileType } from "@/types/types";
+import { useParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
 import { FaStar } from "react-icons/fa";
 
-const reviews = [
+/* const reviews = [
   {
     name: "Chima",
     rating: 4,
@@ -68,10 +72,55 @@ const comments = [
       "User reply: They’re made up of pure wool.",
     ],
   },
-];
+]; */
 
 const CommentModal = () => {
   const [tab, setTab] = useState("reviews");
+  const [reviews, setReviews] = useState<
+    {
+      rating: number;
+      user: {
+        fname: string;
+        lname: string;
+        created_at: string;
+      };
+    }[]
+  >([]);
+  const [comments, setComments] = useState<
+    {
+      id: number;
+      product_id: string;
+      user_id: string;
+      comment: string;
+      parent_id: number | null;
+      created_at: string;
+      user: UserProfileType;
+    }[]
+  >([]);
+  const [loading, setLoading] = useState(true);
+
+  const { id }: { id: string } = useParams();
+
+  useEffect(() => {
+    setLoading(true);
+    getProductReviews(id).then((data) => {
+      setReviews(data.data);
+    });
+    getProductComments(id).then((data) => {
+      setComments(data.data);
+    });
+
+    setLoading(false);
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
+      </div>
+    );
+  }
+
   return (
     <div className=" text-black ">
       <div className="flex justify-between items-center border-b pb-3">
@@ -107,11 +156,12 @@ const CommentModal = () => {
       </div>
       <div className="mt-4 max-h-80 overflow-y-auto">
         {tab === "reviews" &&
+          reviews.length > 0 &&
           reviews.map((review, index) => (
             <div key={index} className="mb-4 flex space-x-3 border-b pb-3">
               <img
-                src={review.image}
-                alt={review.name}
+                src={review?.user?.fname}
+                alt={review?.user?.fname}
                 style={{
                   width: 40,
                   height: 40,
@@ -119,7 +169,9 @@ const CommentModal = () => {
                 className="rounded-full"
               />
               <div>
-                <p className="font-semibold">{review.name}</p>
+                <p className="font-semibold">
+                  {review?.user?.fname} {review?.user?.lname}
+                </p>
                 <div className="flex items-center">
                   {[...Array(5)].map((_, i) => (
                     <FaStar
@@ -132,20 +184,22 @@ const CommentModal = () => {
                   ))}
                   <span className="ml-2 font-bold">({review.rating}.0)</span>
                 </div>
-                <p className="text-gray-600 text-sm">{review.comment}</p>
-                <p className="text-xs text-gray-400">{review.date}</p>
+                {/*     <p className="text-gray-600 text-sm">{review.comment}</p> */}
+                {/*     <p className="text-xs text-gray-400">
+                  {review.created_at}
+                </p> */}
               </div>
             </div>
           ))}
         {tab === "comments" &&
+          comments.length > 0 &&
           comments.map((comment, index) => (
             <div key={index} className="mb-4 border-b pb-3">
-              <p className="font-semibold">{comment.question}</p>
-              {comment.replies.map((reply, i) => (
-                <p key={i} className="text-gray-600 text-sm">
-                  {reply}
-                </p>
-              ))}
+              <p className="font-semibold">{comment?.user?.fname}</p>
+              <p className="text-gray-600 text-sm">{comment?.comment}</p>
+              <p className="text-xs text-gray-400">
+                {new Date(comment?.created_at).toLocaleDateString()}
+              </p>
             </div>
           ))}
       </div>

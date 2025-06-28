@@ -1,24 +1,35 @@
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MyModal from "../Modal/Modal";
 import RejectVendor from "./Modal/RejectVendorModal";
-const businesses = Array(12).fill({
-  name: "Abigail couture",
-  email: "henrich@gmail.com",
-  phone: "08038593829",
-  website: "abigailcouture.com",
-  address: "82 Ray Str, Lekki, Lagos",
-});
+import { useBoundStore } from "@/store/store";
+import { getPendingStores } from "@/networking/endpoints/vendors/getPendingVendors";
+import { approveVendorStore } from "@/networking/endpoints/vendors/approveVendor";
+
 const PendingVendors = () => {
   const router = useRouter();
-  const goToVendorPage = () => {
-    router.push("/dashboard/users/vendors/1?page=products");
+  const goToVendorPage = (id: string) => {
+    router.push(`/dashboard/users/vendors/${id}?page=products`);
   };
   const [isVisible, setIsVisible] = useState(false);
+  const pendingVendors = useBoundStore((state) => state.pendingVendors);
+  const setPendingVendors = useBoundStore((state) => state.setPendingVendors);
+  const [storeId, setStoreId] = useState("");
+
+  useEffect(() => {
+    const handleGetPendingVendors = async () => {
+      const result = await getPendingStores();
+
+      setPendingVendors(result);
+    };
+
+    handleGetPendingVendors();
+  }, [setPendingVendors]);
+  if (!pendingVendors || pendingVendors.length == 0) return null;
   return (
     <div className="p-6 min-h-screen text-black">
       <MyModal isVisible={isVisible} close={() => setIsVisible(false)}>
-        <RejectVendor />
+        <RejectVendor storeId={storeId} setIsVisible={setIsVisible} />
       </MyModal>
       <div className="bg-white shadow rounded-xl overflow-hidden">
         <table className="min-w-full text-left">
@@ -33,29 +44,38 @@ const PendingVendors = () => {
             </tr>
           </thead>
           <tbody>
-            {businesses.map((biz, index) => (
-              <tr key={index}>
-                <td
-                  onClick={goToVendorPage}
-                  className="px-6 py-4 underline cursor-pointer"
-                >
-                  {biz.name}
-                </td>
-                <td className="px-6 py-4 ">{biz.email}</td>
-                <td className="px-6 py-4 ">{biz.phone}</td>
-                <td className="px-6 py-4">{biz.website}</td>
-                <td className="px-6 py-4 ">{biz.address}</td>
-                <td className="px-6 py-4 flex flex-row gap-2.5">
-                  <button className="text-kikaeBlue underline">Accept</button>
-                  <button
-                    onClick={() => setIsVisible(true)}
-                    className="text-red-500 underline"
+            {pendingVendors?.length !== 0 &&
+              pendingVendors.map((biz, index) => (
+                <tr key={index}>
+                  <td
+                    onClick={() => goToVendorPage(biz.id)}
+                    className="px-6 py-4 underline cursor-pointer"
                   >
-                    Reject
-                  </button>
-                </td>
-              </tr>
-            ))}
+                    {biz.name}
+                  </td>
+                  <td className="px-6 py-4 ">{biz.email}</td>
+                  <td className="px-6 py-4 ">{biz.phone}</td>
+                  <td className="px-6 py-4">{biz.website}</td>
+                  <td className="px-6 py-4 ">{biz.address}</td>
+                  <td className="px-6 py-4 flex flex-row gap-2.5">
+                    <button
+                      onClick={() => approveVendorStore(biz.id)}
+                      className="text-kikaeBlue underline"
+                    >
+                      Accept
+                    </button>
+                    <button
+                      onClick={() => {
+                        setIsVisible(true);
+                        setStoreId(biz.id);
+                      }}
+                      className="text-red-500 underline"
+                    >
+                      Reject
+                    </button>
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>

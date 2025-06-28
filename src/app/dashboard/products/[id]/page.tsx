@@ -4,11 +4,13 @@ import MyModal from "@/components/Modal/Modal";
 import Analytics from "@/components/Product/AnalyticsModal";
 import CommentModal from "@/components/Product/CommentModal";
 import ImageGallery from "@/components/Product/ProductImage";
+import { getProductDetail } from "@/networking/endpoints/products/getProduct";
+import { productData } from "@/types/ProductType";
 
-import { useRouter, useSearchParams } from "next/navigation";
-import React from "react";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
+import React, { Suspense, useEffect, useState } from "react";
 
-const product = {
+/* const product = {
   name: "Long sleeve T-shirts",
   description:
     "This shirt isn’t just comfortable, it's practically ethereal. The 'Cloudchaser' is crafted from 100% organic linen, a fabric so lightweight...",
@@ -27,12 +29,33 @@ const product = {
     "https://portal.nbaunitybar.org/tailor-api/storage/app/profile-pic/wCmgY7UuF3m2aZCPrX4uPuL3yaqkLRM0GhD9FaEn.jpg",
   ],
 };
+ */
+const Page = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ProductDetails />
+    </Suspense>
+  );
+};
 
 const ProductDetails = () => {
   const router = useRouter();
   const [openModal, setOpenModal] = React.useState(false);
   const page = useSearchParams().get("page");
   const type = useSearchParams().get("type");
+  const [product, setProduct] = useState<productData | null>(null);
+  const params = useParams<{ id: string }>();
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      const product = await getProductDetail(params.id);
+      setProduct(product?.data);
+    };
+    fetchProduct();
+  }, [params.id]);
+
+  console.log({ params });
+
   return (
     <div className="p-6 max-w-5xl mx-auto rounded-lg ">
       <MyModal close={() => setOpenModal(false)} isVisible={openModal}>
@@ -52,7 +75,7 @@ const ProductDetails = () => {
             <ArrowBack />
           </button>
           <h4 className="text-black text-2xl font-bold font-['Raleway'] leading-9">
-            Long sleeve T-shirts
+            {product?.name}
           </h4>
 
           <button
@@ -96,15 +119,11 @@ const ProductDetails = () => {
         <div className="flex flex-col gap-2 mt-4 w-1/4">
           <div>
             <h4 className="font-bold text-base text-kikaeBlue">Name</h4>
-            <p className=" text-base text-black">Long sleeve T-shirts</p>
+            <p className=" text-base text-black">{product?.name}</p>
           </div>
           <div>
             <h4 className="font-bold text-base text-kikaeBlue">Description</h4>
-            <p className="text-base text-kikaeGrey">
-              This shirt isn&apos;t just comfortable, it&apos;s practically
-              ethereal. The &quot;Cloudchaser&quot; is crafted from 100% organic
-              linen, a fabric so lightweigh... View more
-            </p>
+            <p className="text-base text-kikaeGrey">{product?.description}</p>
           </div>
         </div>
         {/* Product Details */}
@@ -112,7 +131,7 @@ const ProductDetails = () => {
           <div>
             <h3 className="text-kikaeBlue font-semibold">Price</h3>
             <p className="text-lg text-black">
-              ₦{product.price.toLocaleString()}
+              ₦{product?.price?.toLocaleString()}
             </p>
           </div>
           <div>
@@ -120,36 +139,40 @@ const ProductDetails = () => {
               Old Price
             </h3>
             <p className="line-through text-gray-400">
-              ₦{product.oldPrice.toLocaleString()}
+              ₦{product?.old_price?.toLocaleString()}
             </p>
           </div>
           <div>
             <h3 className="text-kikaeBlue text-gray-500 font-semibold">
               Category
             </h3>
-            <p className="text-black">{product.category}</p>
+            <p className="text-black">{product?.category?.name}</p>
           </div>
           <div>
             <h3 className="text-kikaeBlue text-gray-500 font-semibold">
               Sub-category
             </h3>
-            <p className="text-black">{product.subCategory}</p>
+            <p className="text-black">{product?.product_category?.name}</p>
           </div>
           <div>
             <h3 className="text-kikaeBlue text-gray-500 font-semibold">
               Units
             </h3>
-            <p className="text-black">{product.units.toLocaleString()}</p>
+            <p className="text-black">{product?.units?.toLocaleString()}</p>
           </div>
           <div>
             <h3 className="text-kikaeBlue text-gray-500 font-semibold">
               Colors
             </h3>
-            <p className="text-black">{product.colors.join(", ")}</p>
+            <p className="text-black">
+              {product?.colours?.map((colour) => colour.name).join(", ")}
+            </p>
           </div>
           <div>
             <h3 className="text-kikaeBlue text-gray-500 font-semibold">Size</h3>
-            <p className="text-black">{product.sizes.join(", ")}</p>
+            <p className="text-black">
+              {product?.sizes?.map((size) => size.size).join(", ")}
+            </p>
           </div>
           <div>
             <h3 className="text-kikaeBlue text-gray-500 font-semibold">
@@ -190,4 +213,4 @@ const ProductDetails = () => {
   );
 };
 
-export default ProductDetails;
+export default Page;

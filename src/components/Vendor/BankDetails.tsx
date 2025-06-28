@@ -1,5 +1,8 @@
 "use client";
 
+import { getMyBanks } from "@/networking/endpoints/vendors/getStoreBanks";
+import { bankType } from "@/types/bankType";
+import { useEffect, useState } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
 
 const BankCard = ({
@@ -40,39 +43,34 @@ const BankCard = ({
   );
 };
 
-const BankCardList = () => {
-  const bankAccounts = [
-    {
-      name: "Abigael Couture",
-      accountNumber: "237488932",
-      bank: "Zenith Bank",
-      isDefault: true,
-    },
-    {
-      name: "Abigael Couture",
-      accountNumber: "3748291849",
-      bank: "First City Monument Bank (FCMB)",
-      isDefault: false,
-    },
-    {
-      name: "Abigael Couture",
-      accountNumber: "3748291849",
-      bank: "First City Monument Bank (FCMB)",
-      isDefault: false,
-    },
-    {
-      name: "Abigael Couture",
-      accountNumber: "3748291849",
-      bank: "First City Monument Bank (FCMB)",
-      isDefault: false,
-    },
-  ];
+const BankCardList = ({ storeId }: { storeId: string }) => {
+  const [bankAccounts, setBankAccounts] = useState<bankType[]>([]);
 
+  useEffect(() => {
+    const handleGetStoreBanks = async () => {
+      const getStoreBankResults = await getMyBanks(storeId);
+
+      console.log({ getStoreBankResults, storeId });
+
+      if (!getStoreBankResults.data) return;
+
+      if (getStoreBankResults) setBankAccounts(getStoreBankResults.data);
+    };
+
+    handleGetStoreBanks();
+  }, [storeId]);
   return (
     <div className="flex flex-wrap gap-6 mt-6">
-      {bankAccounts.map((account, index) => (
-        <BankCard key={index} {...account} />
-      ))}
+      {bankAccounts?.length !== 0 &&
+        bankAccounts?.map((account, index) => (
+          <BankCard
+            key={index}
+            name={account.account_name}
+            accountNumber={account.number}
+            bank={account.bank}
+            isDefault={account.isDefault}
+          />
+        ))}
     </div>
   );
 };

@@ -50,9 +50,9 @@ const sidebarContents = [
     link: "/categories",
   },
   {
-    title: "deactivated users",
+    title: "deactivated vendors",
     icon: "",
-    link: "/deactivated_users",
+    link: "/deactivated_vendors",
   },
 
   {

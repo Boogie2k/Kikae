@@ -1,8 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { getRunwayVideos } from "@/networking/endpoints/runway/getRunwayVideos";
+import { useBoundStore } from "@/store/store";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
-const data = Array.from({ length: 12 }, (_, i) => ({
+/* const data = Array.from({ length: 12 }, (_, i) => ({
   id: i + 1,
   name: "Black jacket with s...",
   description: "This shirt isn't just comfortable, it's practically...",
@@ -12,12 +15,27 @@ const data = Array.from({ length: 12 }, (_, i) => ({
     "https://portal.nbaunitybar.org/tailor-api/storage/app/profile-pic/wCmgY7UuF3m2aZCPrX4uPuL3yaqkLRM0GhD9FaEn.jpg",
     "https://portal.nbaunitybar.org/tailor-api/storage/app/profile-pic/wCmgY7UuF3m2aZCPrX4uPuL3yaqkLRM0GhD9FaEn.jpg",
   ],
-}));
+})); */
 
 export default function AllVideos() {
   const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
-  const totalPages = 800;
+  /*   const [page, setPage] = useState(1);
+  const totalPages = 800; */
+
+  const allRunwayVideos = useBoundStore((state) => state.allRunwayVideos);
+  const setAllRunwayVideos = useBoundStore((state) => state.setAllRunwaVideos);
+
+  const router = useRouter();
+  useEffect(() => {
+    const handleGetAllRunwayVideos = async () => {
+      const result = await getRunwayVideos();
+
+      setAllRunwayVideos(result.data);
+    };
+    handleGetAllRunwayVideos();
+  }, [setAllRunwayVideos]);
+
+  console.log({ allRunwayVideos });
 
   return (
     <div className="p-6 w-full text-black">
@@ -45,35 +63,54 @@ export default function AllVideos() {
             </tr>
           </thead>
           <tbody>
-            {data.map((row) => (
-              <tr key={row.id} className="">
-                <td className="p-2">
-                  <img
-                    src="https://portal.nbaunitybar.org/tailor-api/storage/app/profile-pic/wCmgY7UuF3m2aZCPrX4uPuL3yaqkLRM0GhD9FaEn.jpg"
-                    alt="Video"
-                    className="w-8 h-8"
-                  />
-                </td>
-                <td className="p-2  underline cursor-pointer">{row.name}</td>
-                <td className="p-2">{row.description}</td>
-                {row.items.map((item, index) => (
-                  <td key={index} className="p-2">
-                    <img
-                      src={item}
-                      alt={`Item ${index + 1}`}
-                      className="w-8 h-8"
-                    />
+            {allRunwayVideos.map((row) => {
+              const paddedProducts = [...row.products];
+
+              // Pad the products array with nulls if less than 4
+              while (paddedProducts.length < 4) {
+                paddedProducts.push(null);
+              }
+
+              return (
+                <tr key={row.id}>
+                  <td
+                    onClick={() => router.push(`/dashboard/runway/${row.id}`)}
+                    className="p-2"
+                  >
+                    <img src="/img/logo.png" alt="Video" className="w-8 h-8" />
                   </td>
-                ))}
-                <td className="p-2">
-                  <button className="text-red-500">Delete</button>
-                </td>
-              </tr>
-            ))}
+                  <td
+                    onClick={() => router.push(`/dashboard/runway/${row.id}`)}
+                    className="p-2 underline cursor-pointer"
+                  >
+                    {row.title}
+                  </td>
+                  <td className="p-2">{row.description}</td>
+
+                  {paddedProducts.map((item, index) => (
+                    <td key={index} className="p-2">
+                      {item ? (
+                        <img
+                          src="/img/logo.png"
+                          alt={`Item ${index + 1}`}
+                          className="w-8 h-8"
+                        />
+                      ) : (
+                        <span className="text-gray-400 italic">No product</span>
+                      )}
+                    </td>
+                  ))}
+
+                  <td className="p-2">
+                    <button className="text-red-500">Delete</button>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
-      <div className="flex justify-between items-center mt-4">
+      {/*   <div className="flex justify-between items-center mt-4">
         <span>Showing 12 of 100,000 results</span>
         <div className="flex items-center gap-2">
           <button
@@ -94,7 +131,7 @@ export default function AllVideos() {
             ▶
           </button>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
